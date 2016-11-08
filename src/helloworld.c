@@ -28,7 +28,7 @@ int main (int argc, char* argv[])
 		cvCvtColor(img , gray_out, CV_RGB2GRAY);
 		cvCanny( gray_out, canny_out, 70, 100, 3 );
 
-		cvShowImage(window_title, gray_out);
+		cvShowImage(window_title, img);
 		if(cvWaitKey(30) != -1) break;
 
 	}
