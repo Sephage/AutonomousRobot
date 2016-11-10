@@ -18,7 +18,7 @@ int main (int argc, char* argv[])
 	frame = cvQueryFrame( capture );
 	cvNamedWindow(window_title, CV_WINDOW_AUTOSIZE);
 
-	IplImage* img = cvCreateImage(cvSize(150,150), frame->depth, frame->nChannels);
+	IplImage* img = cvCreateImage(cvSize(300,300), frame->depth, frame->nChannels);
 	IplImage* gray_out = cvCreateImage( cvGetSize(img), IPL_DEPTH_8U,1);
 	IplImage* canny_out = cvCreateImage( cvGetSize(img), IPL_DEPTH_8U,1);
 
