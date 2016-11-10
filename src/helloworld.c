@@ -21,15 +21,24 @@ int main (int argc, char* argv[])
 	IplImage* img = cvCreateImage(cvSize(300,300), frame->depth, frame->nChannels);
 	IplImage* gray_out = cvCreateImage( cvGetSize(img), IPL_DEPTH_8U,1);
 	IplImage* canny_out = cvCreateImage( cvGetSize(img), IPL_DEPTH_8U,1);
-
+	int i=0;
 	for(;;){
 		frame = cvQueryFrame( capture );
 		cvResize(frame,img,CV_INTER_AREA);
 		cvCvtColor(img , gray_out, CV_RGB2GRAY);
 		cvCanny( gray_out, canny_out, 70, 100, 3 );
 
-		cvShowImage(window_title, img);
+		if(i < 10)
+			cvShowImage(window_title, img);
+		else if(i < 20)
+			cvShowImage(window_title, gray_out);
+		else{
+			cvShowImage(window_title, canny_out);
+			if(i ==30)
+				i = 0;
+		}
 		if(cvWaitKey(30) != -1) break;
+		i++;
 
 	}
 
