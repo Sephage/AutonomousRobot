@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 		step      = img->widthStep;
 		channels  = img->nChannels;
 		data      = (uchar *)img->imageData;
-		printf("Processing a %dx%d image with %d channels\n",height,width,channels); 
+		//printf("Processing a %dx%d image with %d channels\n",height,width,channels); 
 
 		// create a window
 		cvNamedWindow("mainWin", CV_WINDOW_AUTOSIZE); 
