@@ -68,6 +68,7 @@ dkms.conf
 *.log
 *.sql
 *.sqlite
+*.swp
 
 #build directory
 build/*

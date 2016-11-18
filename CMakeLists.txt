@@ -2,15 +2,15 @@ cmake_minimum_required (VERSION 2.8)
 
 
 # Nom du projet
-project (hello)
+project (datas)
 
 
 find_package (OpenCV REQUIRED)
 
 
 # Exécutable "hello", compilé à partir du fichier helloworld.c
-add_executable (hello src/example/frameData.c)
+add_executable (datas src/main.c src/frameCapture.c)
 
 
 # Hello sera linké avec les bibliothèques d'OpenCV
-target_link_libraries (hello ${OpenCV_LIBS})
+target_link_libraries (datas ${OpenCV_LIBS})
