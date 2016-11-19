@@ -5,6 +5,8 @@
 #include <cv.h>
 #include <highgui.h>
 
+#define __DEBUG 0
+
 int main(int* argv, char** argc){
 	CvCapture* capture = cvCaptureFromCAM(0);
 	IplImage* image = 0;
@@ -43,11 +45,12 @@ int main(int* argv, char** argc){
 		cvCvtColor(image, gray, CV_RGB2GRAY);
 		cvCanny( image, canny, 70, 100, 3);
 		getSumColumnValues(canny, columnDatas);
-
-		for(i=0 ; i<image->height ; i++){
-			printf("%li ", columnDatas[i]);
+		if(__DEBUG ){
+			for(i=0 ; i<image->height ; i++){
+				printf("%li ", columnDatas[i]);
+			}
+			puts("");
 		}
-		puts("");
 
 
 		cvShowImage(name, canny);
