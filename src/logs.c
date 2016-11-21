@@ -1,5 +1,5 @@
 #include <time.h>
-#include "logs.h"
+#include "../include/logs.h"
 
 int createLogDirectories() {
   int result = 0;

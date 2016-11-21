@@ -3,8 +3,6 @@ CFLAGS = -Wall
 LDFLAGS=
 GDB = -g
 
-
-
 tests : tests.o t_logs.o logs.o
 	$(CC) -o tests.out $^ $(CFLAGS)
 
