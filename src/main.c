@@ -1,5 +1,5 @@
 /* Possibilité de faire un fichier header */
-#include "../include/frameCapture.h"
+#include "../include/imageUtility.h"
 #include <stdio.h>
 #include <stdio.h>
 #include <cv.h>
@@ -51,8 +51,6 @@ int main(int* argv, char** argc){
 			}
 			puts("");
 		}
-
-
 		cvShowImage(name, canny);
 	}
 
