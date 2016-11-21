@@ -1,3 +1,3 @@
-#include "../src/logs.h"
+#include "../include/logs.h"
 
 int testLogs();
