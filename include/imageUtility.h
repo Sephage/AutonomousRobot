@@ -2,7 +2,7 @@
  * \file frameCapture
  * \brief utility file for basic opencv use 
  * \author Paul VALENTIN
- * \date 17/11/2016
+ * \date 06/12/2016
  */
 
 #include <cv.h>
@@ -17,3 +17,13 @@
  * 		HAVE TO BE DECLARED AT THE JUST SIZE
  */
 void getSumColumnValues(IplImage* image, int64_t* columnValues);
+
+/*
+ * Take an image and print the function columnValues on it
+ * image : the image to print the result, only have to have the same width than columnValues
+ * columnValues : array that we will print
+ *
+ * 		width(image) HAVE TO BE EQUAL TO size(ColumnValue)
+ */
+void printGraphOnImage(IplImage* image, int64_t* columnValues);
+

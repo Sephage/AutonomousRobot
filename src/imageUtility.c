@@ -17,6 +17,23 @@ void getSumColumnValues(IplImage* image, int64_t* columnValues){
 			}
 		}
 	}
+}
 
-	puts("END");
+void printGraphOnImage(IplImage* image, int64_t* columnValues){
+	int i,k;
+	int height = image->height;
+	int width = image->width;
+	int step = image->widthStep;
+	int nChannels = image->nChannels;
+	uchar *data = (uchar *)image->imageData;
+	printf("step = %d, nCHannels = %d\n", step, nChannels);
+	if(columnValues == NULL){
+		fputs(" in printGraphOnImage array not malloc\n", stderr);
+		return;
+	}
+	for(i=0 ; i<width ; i++){
+		for(k=0 ; k<nChannels ; k++){
+			data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k] = 255-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k];
+		}
+	}
 }

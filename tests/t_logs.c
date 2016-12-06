@@ -1,8 +1,8 @@
 #include "t_logs.h"
 
 int testLogs() {
-  const char *logFilePath = "../Logs/TestLogs/t_logsTest.log\0";
-  const char *wmessage = "I am a test.\n\0";
+  const char *logFilePath = "../Logs/TestLogs/t_logsTest.log";
+  const char *wmessage = "I am a test.\n";
   const int wmessageLen = strlen(wmessage);
   Log *logs = NULL;
   FILE *logFile = NULL;
@@ -39,9 +39,9 @@ int testLogs() {
   writeLogFile(logs, wmessage);
   logs = closeLogFile(logs);
 
-  logFile = fopen(logFilePath, "r");
+  logFile = fopen(logFilePath, "rb");
   fseek(logFile, -wmessageLen, SEEK_END);
-  fread(rmessage, sizeof(char), wmessageLen, logFile);
+  fread(rmessage, sizeof(char), strlen(wmessage), logFile);
   if((strcmp(rmessage, wmessage) == 0)) {
     printf("writeLogFile = OK\n");
   }

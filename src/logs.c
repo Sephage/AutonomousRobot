@@ -13,20 +13,20 @@ int createLogDirectories() {
 
 Log* initialiseLogFile(const char *path) {
   time_t seconds;
-  struct tm now;
+  struct tm* now;
 
   time(&seconds);
-  now = *localtime(&seconds);
+  now = localtime(&seconds);
 
   Log* log = (Log*)malloc(sizeof(Log*));
   log->logFilePath = (char *)path;
-  log->logFile = fopen(log->logFilePath, "a");
-  writeLogFile(log, "****************************************************\n\0");
-  writeLogFile(log, "*                  New Code Execution              *\n\0");
-  writeLogFile(log, "*              Date: \0");
-  writeLogFile(log, "HereIsSupposedToBeTheDate\0");
-  writeLogFile(log, "     *\n\0");
-  writeLogFile(log, "****************************************************\n\0");
+  log->logFile = fopen(log->logFilePath, "ab+");
+  writeLogFile(log, "****************************************************\n");
+  writeLogFile(log, "*                  New Code Execution              *\n");
+  writeLogFile(log, "*              Date: ");
+  writeLogFile(log, "HereIsSupposedToBeTheDate");
+  writeLogFile(log, "     *\n");
+  writeLogFile(log, "****************************************************\n");
   return log;
 }
 
