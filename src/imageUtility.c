@@ -33,7 +33,7 @@ void printGraphOnImage(IplImage* image, int64_t* columnValues){
 	}
 	for(i=0 ; i<width ; i++){
 		for(k=0 ; k<nChannels ; k++){
-			data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k] = 255-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k];
+			data[((((columnValues[i]/(255*nChannels))*-1)+height)*step) + i*nChannels + k] = 255-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k];
 		}
 	}
 }

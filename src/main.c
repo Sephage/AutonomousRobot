@@ -12,16 +12,17 @@ int main(int* argv, char** argc){
 	IplImage* image = 0;
 	IplImage* canny = 0;
 	IplImage* gray = 0;
+	IplImage* graph = 0;
 	int64_t* columnDatas;
 	int16_t i;
 	char* name = "What an awesome pic";
+	char* graphName = "What an awesome graph";
 
 	puts("Initialization ...");
 	
-	//if(!captureFrame(image, capture)) exit(1);
-	//image = cvQueryFrame(capture);
-	image = cvCreateImage(cvSize(640, 480), IPL_DEPTH_8U, 3);
-	cvSet(image, CV_RGB(253,253,253), NULL);
+	image = cvQueryFrame(capture);
+	graph = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 3);
+	cvSet(image, CV_RGB(255,255,255), NULL);
 	//canny = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1);
 	//gray = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1);
 	if(!image){
@@ -30,6 +31,7 @@ int main(int* argv, char** argc){
 	}
 	columnDatas = malloc(image->width * sizeof(int64_t));
 	cvNamedWindow(name, CV_WINDOW_AUTOSIZE);
+	cvNamedWindow(graphName, CV_WINDOW_AUTOSIZE);
 
 	puts("Initialization complete !!");
 
@@ -38,7 +40,7 @@ int main(int* argv, char** argc){
 	printf("image->width = %i\n", image->width);
 	printf("image->nChannels = %i\n", image->nChannels);
 
-	//image = cvQueryFrame(capture);
+	image = cvQueryFrame(capture);
 	if(!image){
 		puts("Image fail to load");
 		exit(1);
@@ -53,8 +55,10 @@ int main(int* argv, char** argc){
 		puts("");
 	}
 	//Save
-	printGraphOnImage(image, columnDatas);
+	printGraphOnImage(graph, columnDatas);
 	cvSaveImage("../saveImages/imgTest.jpg", image, 0);
+	cvSaveImage("../saveImages/graphTest.jpg", graph, 0);
+	cvShowImage(graphName, graph);
 	cvShowImage(name, image);
 
 	while(cvWaitKey(30) == -1){
