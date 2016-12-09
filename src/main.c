@@ -13,6 +13,7 @@ int main(int* argv, char** argc){
 	IplImage* canny = 0;
 	IplImage* gray = 0;
 	IplImage* graph = 0;
+	IplImage* thumbnail = 0;
 	int64_t* columnDatas;
 	int16_t i;
 	char* name = "What an awesome pic";
@@ -54,12 +55,16 @@ int main(int* argv, char** argc){
 		}
 		puts("");
 	}
-	//Save
+
 	printGraphOnImage(graph, columnDatas);
+	thumbnail = getThumbnail(image, columnDatas, 30);
+
+	//Save
 	cvSaveImage("../saveImages/imgTest.jpg", image, 0);
 	cvSaveImage("../saveImages/graphTest.jpg", graph, 0);
 	cvShowImage(graphName, graph);
 	cvShowImage(name, image);
+
 
 	while(cvWaitKey(30) == -1){
 	}

@@ -27,3 +27,12 @@ void getSumColumnValues(IplImage* image, int64_t* columnValues);
  */
 void printGraphOnImage(IplImage* image, int64_t* columnValues);
 
+/*
+ * Take an image and return the thumbnail (32*32) corresponding at the part of the image center in
+ * (widthPos;heightPos)
+ *
+ * image : the image where we will extract thumbnail
+ * widthPos : the center of the thumbnail on x axis
+ * heightPos : the center of the thumbnail on y axis
+ */
+IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);

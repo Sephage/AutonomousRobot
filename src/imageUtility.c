@@ -37,3 +37,16 @@ void printGraphOnImage(IplImage* image, int64_t* columnValues){
 		}
 	}
 }
+
+IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos){
+	IplImage* thumbnail = 0;
+
+	cvSetImageROI(image, cvRect(widthPos, heightPos, 32, 32));
+	thumbnail = cvCreateImage(cvSize(32, 32), image->depth, image->nChannels);
+	cvCopy(image, thumbnail, NULL);
+	/* always reset the Region of Interest */
+	cvResetImageROI(image);
+
+	/*Here take the image, and copy 16*16pixel in thumbnail IplImage*/
+	return thumbnail;
+}
