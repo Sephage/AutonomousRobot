@@ -36,3 +36,15 @@ void printGraphOnImage(IplImage* image, int64_t* columnValues);
  * heightPos : the center of the thumbnail on y axis
  */
 IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);
+
+
+/*
+ * Take an image and save the image in the right place,
+ * Put the right information into the saving configuration file.
+ *
+ * imageToSave : image which will be save
+ * placeNumber : the number of the place that the image belong
+ * angle : the angle of the image
+ */
+void saveImage(IplImage* imageToSave, int placeNumber, float angle);
+

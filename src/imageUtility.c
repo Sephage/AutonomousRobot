@@ -1,5 +1,12 @@
 #include "../include/imageUtility.h"
+
 #include <stdio.h>
+
+/*For saving functions*/
+#include <sys/types.h>
+#include <dirent.h>
+
+#include <errno.h>
 
 
 void getSumColumnValues(IplImage* image, int64_t* columnValues){
@@ -33,7 +40,8 @@ void printGraphOnImage(IplImage* image, int64_t* columnValues){
 	}
 	for(i=0 ; i<width ; i++){
 		for(k=0 ; k<nChannels ; k++){
-			data[((((columnValues[i]/(255*nChannels))*-1)+height)*step) + i*nChannels + k] = 255-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k];
+			data[((((columnValues[i]/(255*nChannels))*-1)+height)*step) + i*nChannels + k] = 
+				255-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k];
 		}
 	}
 }
@@ -44,9 +52,16 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos){
 	cvSetImageROI(image, cvRect(widthPos, heightPos, 32, 32));
 	thumbnail = cvCreateImage(cvSize(32, 32), image->depth, image->nChannels);
 	cvCopy(image, thumbnail, NULL);
-	/* always reset the Region of Interest */
 	cvResetImageROI(image);
 
-	/*Here take the image, and copy 16*16pixel in thumbnail IplImage*/
 	return thumbnail;
+}
+
+void saveImage(IplImage* imageToSave, int placeNumber, float angle){
+	DIR* directory = 0;	
+
+	directory = opendir("../saveImages");
+	/*regarder si le dossier de la place exist si oui on regarde dedans et enregistre la place a nb+1 sinon on créé et on enregistre a 1*/
+
+
 }
