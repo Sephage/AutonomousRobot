@@ -5,6 +5,8 @@
 /*For saving functions*/
 #include <sys/types.h>
 #include <dirent.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #include <errno.h>
 
@@ -57,11 +59,30 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos){
 	return thumbnail;
 }
 
-void saveImage(IplImage* imageToSave, int placeNumber, float angle){
+int saveImage(IplImage* imageToSave, int placeNumber, float angle){
 	DIR* directory = 0;	
+	struct dirent* file = 0;
+	int exist = 0;
+	char placeName[256];
+	char imageName[256];
+	struct stat st = {0};
+	FILE* configFile = 0;
+	char configName[256];
 
-	directory = opendir("../saveImages");
+	sprintf(placeName, "../saveImages/%d", placeNumber);
 	/*regarder si le dossier de la place exist si oui on regarde dedans et enregistre la place a nb+1 sinon on créé et on enregistre a 1*/
+	if(stat(placeName, &st) == -1){
+		printf("Creation du fichier\n");
+		mkdir(placeName, 0777);
+		cvSaveImage("../saveImages/1/1.jpg", imageToSave, 0);
+		/* Ecrire dans le fichier de config : number angle*/
+		sprintf(configName, "../saveImages/1/config.cfg");
+		configFile = fopen(configName, "a+");
+		fprintf(configFile,"1 %lf", angle); 
+	}
+	else{
+
+	}
 
 
 }

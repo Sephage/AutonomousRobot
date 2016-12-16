@@ -57,7 +57,7 @@ int main(int* argv, char** argc){
 	}
 
 	printGraphOnImage(graph, columnDatas);
-	thumbnail = getThumbnail(image, columnDatas, 30);
+	thumbnail = getThumbnail(image, 50, 30);
 
 	//Save
 	cvSaveImage("../saveImages/imgTest.jpg", image, 0);
@@ -65,7 +65,7 @@ int main(int* argv, char** argc){
 	cvShowImage(graphName, graph);
 	cvShowImage(name, image);
 
-
+	saveImage(thumbnail, 1, 30);
 	while(cvWaitKey(30) == -1){
 	}
 

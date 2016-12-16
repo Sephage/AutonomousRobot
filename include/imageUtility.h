@@ -46,5 +46,5 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);
  * placeNumber : the number of the place that the image belong
  * angle : the angle of the image
  */
-void saveImage(IplImage* imageToSave, int placeNumber, float angle);
+int saveImage(IplImage* imageToSave, int placeNumber, float angle);
 
