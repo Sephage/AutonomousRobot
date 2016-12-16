@@ -1,11 +1,15 @@
+#include <cv.h>
+#include <highgui.h>
+
 #define NB_LANDMARKS_MAX 15
 
-typedef struct Landmark {
+typedef struct {
   float angle;
   IplImage* thumbnail;
-}*Landmark_p, Landmark_t;
+}Landmark;
 
-typedef struct Place {
-  Landmark_p* landmarks;
-  float deplacementVectorAngle;
-}*Place_p, Place_t;
+typedef struct {
+  Landmark landmarks[NB_LANDMARKS_MAX];
+  float movementVectorAngle;
+  int landmarksSize;
+}Place;
