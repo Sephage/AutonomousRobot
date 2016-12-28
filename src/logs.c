@@ -1,4 +1,4 @@
-#include <time.h>
+#include <sys/time.h>
 #include "../include/logs.h"
 
 int createLogDirectories() {
@@ -12,20 +12,12 @@ int createLogDirectories() {
 }
 
 Log* initialiseLogFile(const char *path) {
-  time_t seconds;
-  struct tm* now;
-
-  time(&seconds);
-  now = localtime(&seconds);
 
   Log* log = (Log*)malloc(sizeof(Log*));
   log->logFilePath = (char *)path;
   log->logFile = fopen(log->logFilePath, "ab+");
   writeLogFile(log, "****************************************************\n");
   writeLogFile(log, "*                  New Code Execution              *\n");
-  writeLogFile(log, "*              Date: ");
-  writeLogFile(log, "HereIsSupposedToBeTheDate");
-  writeLogFile(log, "     *\n");
   writeLogFile(log, "****************************************************\n");
   return log;
 }
@@ -35,6 +27,9 @@ void writeLogFile(Log *log, const char *message) {
 }
 
 Log* closeLogFile(Log *log) {
+  writeLogFile(log, "****************************************************\n");
+  writeLogFile(log, "*                  End Code Execution              *\n");
+  writeLogFile(log, "****************************************************\n");
   fclose(log->logFile);
   free(log);
   return NULL;
