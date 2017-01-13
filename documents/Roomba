@@ -1,0 +1,39 @@
+Nom : iRobot Roomba
+Série : 530
+
+Configuration Port Série :
+Baud: 115200 (défaut, possible pour l'arduino) or 19200 (si limité par micro-contrôlleur)
+Data bits: 8
+Parity: None
+Stop bits: 1
+Flow control: None
+
+[Pin Arduino ; Pin Roomba => Câble :Correspondance]
+
+M1- (Shield); _ => Câble BLANC (gros) : Alimentation Moteur pôle négatif ?
+M1+ (Shield); _ => Câble BLANC (gros) : Alimentation Moteur pôle positif ?
+GND (Shield); _ => Câble NOIR (gros) : Prise de terre Arduino ?
+Vin (Shield); _ => Câble ROUGE (gros) : Alimentation Arduino pôle positif ?
+GND (Shield); 6 ou 7 (GND) => Câble JAUNE-VERT : Prise de terre Arduino
+5V (Shield); [Boussole] VCC =>  Câble ROUGE (petit) : Alimentation Compas Gyroscopique
+GND (Shield); [Boussole] GND => Câble NOIR (petit) : Prise de terre Compas Gyroscopique
+TX1 18 ; RXD => Câble MARRON (petit) : Output Arduino vers Input Roomba
+RX1 19 ; TXD => Câble BLEU (petit) : Output Roomba vers Input Arduino
+SDA 20; [Boussole] SDA => Câble BLANC (petit) : Bus I2C Data
+SCL 21 ; [Boussole] SCL => Câble JAUNE (petit) : Bus I2C Clock
+
+
+Use Roomba :
+1. Start Roomba with sequence : [128]
+2. Roomba in Off mode after being started.
+3. (Optional) [129][Baud Code] (voir doc technique pour Baud Code)
+4. Change Roomba into Safe Mode : [131]
+5.
+
+
+
+Commandes utiles ;
+
+Seek Dock : [143]
+Set Clock :  [168][Day][Hour][Minute]
+Power down Roomba : [133]
