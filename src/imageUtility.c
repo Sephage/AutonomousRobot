@@ -59,6 +59,7 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos){
 	return thumbnail;
 }
 
+/*To rewrite : only save images*/
 int saveImage(IplImage* imageToSave, int placeNumber, float angle){
 	DIR* directory = 0;	
 	struct dirent* file = 0;
@@ -85,4 +86,44 @@ int saveImage(IplImage* imageToSave, int placeNumber, float angle){
 	}
 
 
+}
+
+int compareImage(IplImage* current, IplImage* learned){
+	const int range = 3;
+	int width = current->width;
+	int height = current->height;
+	int step = current->widthStep;
+	int nChannels = current->nChannels;
+	int i,j,k;
+	int recognition = 0;
+
+	if(width != learned->width){
+		fputs("Widh aren't similar\n", stderr);
+		return -1;
+	}
+	if(height != learned->height){
+		fputs("Height aren't similar\n", stderr);
+		return -1;
+	}
+	if(step != learned->widthStep){
+		fputs("step aren't similar\n", stderr);
+		return -1;
+	}
+	if(nChannels != learned->nChannels){
+		fputs("nChannels aren't similar\n", stderr);
+		return -1;
+	}
+	for(i=0 ; i<height ; i++){
+		for(j=0 ; j<width ; j++){
+			for(k=0 ; k<nChannels ; k++){
+				/*Faut tester pour voir combien de delta on laisse pour la reconnaissance*/
+				if(current->imageData[i*step+j*nChannels+k] > learned->imageData[i*step+j*nChannels+k]-range
+				&& current->imageData[i*step+j*nChannels+k]<learned->imageData[i*step+j*nChannels+k]+range){
+					recognition += 1;
+				}
+			}
+		}
+	}
+	recognition = (100*recognition)/(height*width*nChannels);
+	return recognition;
 }
