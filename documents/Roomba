@@ -1,14 +1,14 @@
 Nom : iRobot Roomba
 Série : 530
 
-Configuration Port Série :
+Configuration Serial Port :
 Baud: 115200 (défaut, possible pour l'arduino) or 19200 (si limité par micro-contrôlleur)
 Data bits: 8
 Parity: None
 Stop bits: 1
 Flow control: None
 
-[Pin Arduino ; Pin Roomba => Câble :Correspondance]
+Matching pin arduino → Roomba
 
 M1- (Shield); _ => Câble BLANC (gros) : Alimentation Moteur pôle négatif ?
 M1+ (Shield); _ => Câble BLANC (gros) : Alimentation Moteur pôle positif ?
@@ -23,17 +23,56 @@ SDA 20; [Boussole] SDA => Câble BLANC (petit) : Bus I2C Data
 SCL 21 ; [Boussole] SCL => Câble JAUNE (petit) : Bus I2C Clock
 
 
-Use Roomba :
+Typical use case of the roomba :
 1. Start Roomba with sequence : [128]
 2. Roomba in Off mode after being started.
 3. (Optional) [129][Baud Code] (voir doc technique pour Baud Code)
 4. Change Roomba into Safe Mode : [131]
-5.
+5. All the request you want to do
+6. Power down Roomba : [133]
 
 
 
-Commandes utiles ;
+Useful commands :
 
 Seek Dock : [143]
 Set Clock :  [168][Day][Hour][Minute]
-Power down Roomba : [133]
+
+Navigation  commands:
+
+	- Drive : [137] [Velocity high byte] [Velocity low byte] [Radius high byte] [Radius low byte]
+		    	• 4 bytes interpreted as two 16 bit signed values
+			• Velocity (-500 – 500 mm/s)
+			• Radius (-2000 – 2000 mm
+	
+	- Drive Direct:	[145] [Right velocity high byte] [Right velocity low byte] [Left velocity high byte][Left velocity low byte]
+			• 4 bytes interpreted as two 16 bit signed values
+			• Right wheel velocity (-500 – 500 mm/s)
+			• Left wheel velocity (-500 – 500 mm/s) 
+Sensors :
+Commands :
+	- sensor : [142] [Packet ID]
+	- Query List : [149][Number of Packets][Packet ID 1][Packet ID 2]...[Packet ID N] 
+	- Stream : [148] [Number of packets] [Packet ID 1] [Packet ID 2] [Packet ID 3]
+		• Requested data sent every 15 ms, which is the rate Roomba uses to update data.
+		• Value returned in format : [19][N-bytes][Packet ID 1][Packet 1 data…][Packet ID 2][Packet 2 data…][Checksum]
+		• The checksum is a 1-byte value. It is the 8-bit complement of all of the bytes between the header and the checksum. That is, if you add all of the bytes after the checksum, and the checksum, the low byte of the result will be 0. 
+
+Packet ID :
+
+Most of the packets (numbers 7 – 58) contain the value of a single sensor or variable, which can be either 1 byte or 2 bytes. Two byte packets correspond to 16-bit values, sent high byte first. Some of the packets (0-6, 100-107) contain groups of the single-value packets. (See datasheet for more info)
+	
+- Wall Signal		Packet ID: 27 		Data Bytes: 1, unsigned 	Range: 0-1023. 
+- Cliff Left Signal	Packet ID: 28 		Data Bytes: 1, unsigned	Range: 0-4095
+- Cliff Front Left Signal 	Packet ID: 29 		Data Bytes: 1, unsigned 	Range: 0-4095
+- Cliff Front Right Signal	Packet ID: 30 		Data Bytes: 1, unsigned	Range: 0-4095
+ - Cliff Right Signal	Packet ID: 31 		Data Bytes: 1, unsigned 	Range: 0-4095
+- Distance 		Packet ID: 19 		Data Bytes: 2, signed		Range: -32768 – 32767
+- Angle 		Packet ID: 20 		Data Bytes: 2, signed 		Range: -32768 – 32767
+- Right Encoder Counts    Packet ID: 43 	Data Bytes 2, unsigned	Range: 0 - 65535
+- Left Encoder Counts    Packet ID: 44 	Data Bytes 2, unsigned	Range: 0 - 65535
+- Stasis 		Packet ID: 58 		Data Bytes: 1
+	The stasis caster sensor returns 1 when the robot is making forward progress and 0 when it is not. This always returns 0 when the robot is turning, driving backward, or not driving. 
+	Range: 0 – 1
+
+
