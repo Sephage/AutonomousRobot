@@ -9,7 +9,7 @@ find_package (OpenCV REQUIRED)
 
 
 # Exécutable "hello", compilé à partir du fichier helloworld.c
-add_executable (datas src/main.c src/imageUtility.c)
+add_executable (datas src/rasp/main.c src/rasp/imageProcessing/imageUtility.c)
 
 
 # Hello sera linké avec les bibliothèques d'OpenCV

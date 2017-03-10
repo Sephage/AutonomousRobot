@@ -1,4 +1,4 @@
-#include "../include/imageUtility.h"
+#include "../../../include/imageUtility.h"
 
 #include <stdio.h>
 
@@ -42,7 +42,7 @@ void printGraphOnImage(IplImage* image, int64_t* columnValues){
 	}
 	for(i=0 ; i<width ; i++){
 		for(k=0 ; k<nChannels ; k++){
-			data[((((columnValues[i]/(255*nChannels))*-1)+height)*step) + i*nChannels + k] = 
+			data[((((columnValues[i]/(255*nChannels))*-1)+height)*step) + i*nChannels + k] =
 				255-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k];
 		}
 	}
@@ -61,7 +61,7 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos){
 
 /*To rewrite : only save images*/
 int saveImage(IplImage* imageToSave, int placeNumber, float angle){
-	DIR* directory = 0;	
+	DIR* directory = 0;
 	struct dirent* file = 0;
 	int exist = 0;
 	char placeName[256];
@@ -79,7 +79,7 @@ int saveImage(IplImage* imageToSave, int placeNumber, float angle){
 		/* Ecrire dans le fichier de config : number angle*/
 		sprintf(configName, "../saveImages/1/config.cfg");
 		configFile = fopen(configName, "a+");
-		fprintf(configFile,"1 %lf", angle); 
+		fprintf(configFile,"1 %lf", angle);
 	}
 	else{
 

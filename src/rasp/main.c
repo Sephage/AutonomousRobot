@@ -1,5 +1,5 @@
 /* Possibilité de faire un fichier header */
-#include "../include/imageUtility.h"
+#include "../../include/imageUtility.h"
 #include <stdio.h>
 #include <stdio.h>
 #include <cv.h>
@@ -21,7 +21,7 @@ int main(int* argv, char** argc){
 	char* graphName = "What an awesome graph";
 
 	puts("Initialization ...");
-	
+
 	image = cvQueryFrame(capture);
 	graph = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 1);
 	cvSet(image, CV_RGB(255,255,255), NULL);
@@ -61,7 +61,7 @@ int main(int* argv, char** argc){
 	printGraphOnImage(gray, columnDatas);
 
 	thumbnail = getThumbnail(image, 50, 30);
-	
+
 
 	image = cvQueryFrame(capture);
 	thumbnail2 = getThumbnail(image, 50, 30);
@@ -70,12 +70,12 @@ int main(int* argv, char** argc){
 	printf("Image reconnu a : %d pourcent \n", recog);
 
 	//Save
-	cvSaveImage("../saveImages/imgTest.jpg", image, 0);
-	cvSaveImage("../saveImages/graphTest.jpg", graph, 0);
+	cvSaveImage("../../saveImages/imgTest.jpg", image, 0);
+	cvSaveImage("../../saveImages/graphTest.jpg", graph, 0);
 	cvShowImage(graphName, graph);
 	cvShowImage(name, gray);
 
-	saveImage(thumbnail, 1, 30);
+	//saveImage(thumbnail, 1, 30);
 	while(cvWaitKey(30) == -1){
 	}
 
