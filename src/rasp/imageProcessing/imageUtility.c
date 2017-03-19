@@ -10,6 +10,47 @@
 
 #include <errno.h>
 
+void contourDetection(int64_t* interest, int64_t* columnData,int16_t nbrColumn)
+{
+	int32_t i;
+	if(interest == NULL)
+	{
+		fputs("The array in contourDetection is NULL",stderr);
+		return ;
+	}
+
+	//Calcul du premier élément en créant une redondance de l'information
+	interest[0] = abs(-columnData[0]+columnData[1]);
+
+	for(i=1;i<nbrColumn-1;i++)
+	{
+		interest[i] = abs(-columnData[i-1]+columnData[i+1]);
+	}
+
+	//Calcul du dernier élément en créant une redondance de l'information
+	interest[i+1] = abs(-columnData[i]+columnData[i+1]);
+}
+
+void smoothingGraph(int64_t* columnData, int64_t* smoothColumnData, int16_t nbrColumn)
+{
+	int32_t i;
+	if(smoothColumnData == NULL)
+	{
+		fputs("The array in smoothingGraph is NULL",stderr);
+		return ;
+	}
+
+	//Calcul du premier élément
+	smoothColumnData[0]=(2*columnData[0]+columnData[1])/3;
+
+	for(i=1;i<nbrColumn-1;i++)
+	{
+		smoothColumnData[i]=(columnData[i-1]+columnData[i]+columnData[i+1])/3;
+	}
+
+	//Calcul du dernier élément
+	smoothColumnData[i+1]=(columnData[i]+2*columnData[i+1])/3;
+}
 
 void getSumColumnValues(IplImage* image, int64_t* columnValues){
 	int32_t i,j,k;
