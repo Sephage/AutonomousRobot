@@ -7,7 +7,8 @@
 
 #define __DEBUG 0
 
-int main(int* argv, char** argc){
+int main(int* argv, char** argc)
+{
 	CvCapture* capture = cvCaptureFromCAM(0);
 	IplImage* image = 0;
 	IplImage* canny = 0;
@@ -78,16 +79,9 @@ int main(int* argv, char** argc){
 	}
 
 	//Add
-	smoothingGraph(columnDatas,smoothColumnData, image->width);
+	lowFiltering(columnDatas, smoothColumnData, image->width, 7);
 	//Add
-	contourDetection(interestGraph, smoothColumnData, image->width);
-
-	//Add
-	for(i=0;i<image->width;i++)
-	{
-		printf("%li ", interestGraph[i]);
-	}
-		
+	sobel(smoothColumnData, interestGraph, image->width);
 
 	printGraphOnImage(graph, columnDatas);
 	//Add
@@ -122,7 +116,7 @@ int main(int* argv, char** argc){
 	{
 		if(grow==1 && !(interestGraph[i+1]>=interestGraph[i]) && interestGraph[i] > 1000 && (pos==-1 || (i-pos)>16))
 		{
-			sprintf(path,"../saveImages/thumbnails/thumbnails%.3d.jpg", nbr);
+			sprintf(path,"../saveImages/thumbnails/thumbnails%.3d.jpg", nbr);			
 			thumbnail = getThumbnail(image, i, 200);
 			cvSaveImage(path, thumbnail, 0);
 			cvShowImage("interest",thumbnail);
@@ -131,8 +125,6 @@ int main(int* argv, char** argc){
 			}
 
 			pos=i,
-
-			printf("ok\n");
 
 			cvReleaseImage(&thumbnail);
 			nbr++;

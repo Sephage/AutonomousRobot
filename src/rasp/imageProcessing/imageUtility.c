@@ -10,66 +10,78 @@
 
 #include <errno.h>
 
-void contourDetection(int64_t* interest, int64_t* columnData,int16_t nbrColumn)
+void sobel(int64_t* curve, int64_t* derived, int nbrColumn)
 {
-	int32_t i;
-	if(interest == NULL)
+	int i;
+	if(derived == NULL)
 	{
-		fputs("The array in contourDetection is NULL",stderr);
+		fputs("NULL pointer exception in sobel",stderr);
 		return ;
 	}
 
 	//Calcul du premier élément en créant une redondance de l'information
-	interest[0] = abs(-columnData[0]+columnData[1]);
+	derived[0] = abs(-curve[0]+curve[1]);
 
 	for(i=1;i<nbrColumn-1;i++)
 	{
-		interest[i] = abs(-columnData[i-1]+columnData[i+1]);
+		derived[i] = abs(-curve[i-1]+curve[i+1]);
 	}
 
 	//Calcul du dernier élément en créant une redondance de l'information
-	interest[i+1] = abs(-columnData[i]+columnData[i+1]);
+	derived[i+1] = abs(-curve[i]+curve[i+1]);
 }
 
-void smoothingGraph(int64_t* columnData, int64_t* smoothColumnData, int16_t nbrColumn)
+void lowFiltering(int64_t* curve, int64_t* smoothed, int nbrColumn, int size)
 {
-	int32_t i;
-	if(smoothColumnData == NULL)
+	int mean;
+	int i, j;
+	int iLeft, iRight;
+
+	if(smoothed == NULL)
 	{
-		fputs("The array in smoothingGraph is NULL",stderr);
+		fputs("NULL pointer exception in lowFiltering",stderr);
 		return ;
 	}
 
-	//Calcul du premier élément
-	smoothColumnData[0]=(2*columnData[0]+columnData[1])/3;
-
-	for(i=1;i<nbrColumn-1;i++)
+	for(i = 0; i < nbrColumn; i++)
 	{
-		smoothColumnData[i]=(columnData[i-1]+columnData[i]+columnData[i+1])/3;
-	}
+		//On détermine les bornes à prendre en compte pour le filtre
+		mean = 0;
+		iLeft = i-size/2 >= 0 ? i-size/2 : 0;
+		iRight = i+size/2 < nbrColumn ? i+size/2 : nbrColumn-1;
 
-	//Calcul du dernier élément
-	smoothColumnData[i+1]=(columnData[i]+2*columnData[i+1])/3;
+		for(j = iLeft; j <= iRight; j++)
+		{
+			mean += curve[j];
+		}
+		smoothed[i]=mean/(iRight-iLeft+1);
+	}
 }
 
-void getSumColumnValues(IplImage* image, int64_t* columnValues){
+void getSumColumnValues(IplImage* image, int64_t* columnValues)
+{
 	int32_t i,j,k;
-	if(columnValues == NULL){
+	if(columnValues == NULL)
+	{
 		fputs("The array in getSumColumnValues is NULL",stderr);
 		return ;
 	}
 
-	for(i=0 ; i<image->width ; i++){
+	for(i=0 ; i<image->width ; i++)
+	{
 		columnValues[i] = 0;
-		for(j=0 ; j<image->height ; j++){
-			for(k=0 ; k<image->nChannels ; k++){
+		for(j=0 ; j<image->height ; j++)
+		{
+			for(k=0 ; k<image->nChannels ; k++)
+			{
 				columnValues[i]	+= (uchar)image->imageData[j*image->widthStep+i*image->nChannels+k];
 			}
 		}
 	}
 }
 
-void printGraphOnImage(IplImage* image, int64_t* columnValues){
+void printGraphOnImage(IplImage* image, int64_t* columnValues)
+{
 	int i,k;
 	int height = image->height;
 	int width = image->width;
@@ -77,19 +89,23 @@ void printGraphOnImage(IplImage* image, int64_t* columnValues){
 	int nChannels = image->nChannels;
 	uchar *data = (uchar *)image->imageData;
 	printf("step = %d, nCHannels = %d\n", step, nChannels);
-	if(columnValues == NULL){
+	if(columnValues == NULL)
+	{
 		fputs(" in printGraphOnImage array not malloc\n", stderr);
 		return;
 	}
-	for(i=0 ; i<width ; i++){
-		for(k=0 ; k<nChannels ; k++){
+	for(i=0 ; i<width ; i++)
+	{
+		for(k=0 ; k<nChannels ; k++)
+		{
 			data[((((columnValues[i]/(255*nChannels))*-1)+height)*step) + i*nChannels + k] =
-				255-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k];
+				255/*-data[(columnValues[i]/(255*nChannels))*step + i*nChannels + k]*/;
 		}
 	}
 }
 
-IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos){
+IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos)
+{
 	IplImage* thumbnail = 0;
 
 	cvSetImageROI(image, cvRect(widthPos, heightPos, 32, 32));
@@ -101,7 +117,8 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos){
 }
 
 /*To rewrite : only save images*/
-int saveImage(IplImage* imageToSave, int placeNumber, float angle){
+int saveImage(IplImage* imageToSave, int placeNumber, float angle)
+{
 	DIR* directory = 0;
 	struct dirent* file = 0;
 	int exist = 0;
@@ -113,7 +130,8 @@ int saveImage(IplImage* imageToSave, int placeNumber, float angle){
 
 	sprintf(placeName, "../saveImages/%d", placeNumber);
 	/*regarder si le dossier de la place exist si oui on regarde dedans et enregistre la place a nb+1 sinon on créé et on enregistre a 1*/
-	if(stat(placeName, &st) == -1){
+	if(stat(placeName, &st) == -1)
+	{
 		printf("Creation du fichier\n");
 		mkdir(placeName, 0777);
 		cvSaveImage("../saveImages/1/1.jpg", imageToSave, 0);
@@ -122,14 +140,10 @@ int saveImage(IplImage* imageToSave, int placeNumber, float angle){
 		configFile = fopen(configName, "a+");
 		fprintf(configFile,"1 %lf", angle);
 	}
-	else{
-
-	}
-
-
 }
 
-int compareImage(IplImage* current, IplImage* learned){
+int compareImage(IplImage* current, IplImage* learned)
+{
 	const int range = 3;
 	int width = current->width;
 	int height = current->height;
@@ -138,28 +152,36 @@ int compareImage(IplImage* current, IplImage* learned){
 	int i,j,k;
 	int recognition = 0;
 
-	if(width != learned->width){
+	if(width != learned->width)
+	{
 		fputs("Widh aren't similar\n", stderr);
 		return -1;
 	}
-	if(height != learned->height){
+	if(height != learned->height)
+	{
 		fputs("Height aren't similar\n", stderr);
 		return -1;
 	}
-	if(step != learned->widthStep){
+	if(step != learned->widthStep)
+	{
 		fputs("step aren't similar\n", stderr);
 		return -1;
 	}
-	if(nChannels != learned->nChannels){
+	if(nChannels != learned->nChannels)
+	{
 		fputs("nChannels aren't similar\n", stderr);
 		return -1;
 	}
-	for(i=0 ; i<height ; i++){
-		for(j=0 ; j<width ; j++){
-			for(k=0 ; k<nChannels ; k++){
+	for(i=0 ; i<height ; i++)
+	{
+		for(j=0 ; j<width ; j++)
+		{
+			for(k=0 ; k<nChannels ; k++)
+			{
 				/*Faut tester pour voir combien de delta on laisse pour la reconnaissance*/
 				if(current->imageData[i*step+j*nChannels+k] > learned->imageData[i*step+j*nChannels+k]-range
-				&& current->imageData[i*step+j*nChannels+k]<learned->imageData[i*step+j*nChannels+k]+range){
+				&& current->imageData[i*step+j*nChannels+k]<learned->imageData[i*step+j*nChannels+k]+range)
+				{
 					recognition += 1;
 				}
 			}
@@ -167,4 +189,45 @@ int compareImage(IplImage* current, IplImage* learned){
 	}
 	recognition = (100*recognition)/(height*width*nChannels);
 	return recognition;
+}
+
+int diffComparison(IplImage* current, IplImage* learned){
+	int width = current->width;
+	int height = current->height;
+	int step = current->widthStep;
+	int nChannels = current->nChannels;
+	int i,j,k;
+	int diff = 0;
+
+	if(width != learned->width)
+	{
+		fputs("Widh aren't similar\n", stderr);
+		return -1;
+	}
+	if(height != learned->height)
+	{
+		fputs("Height aren't similar\n", stderr);
+		return -1;
+	}
+	if(step != learned->widthStep)
+	{
+		fputs("step aren't similar\n", stderr);
+		return -1;
+	}
+	if(nChannels != learned->nChannels)
+	{
+		fputs("nChannels aren't similar\n", stderr);
+		return -1;
+	}
+	for(i=0 ; i<height ; i++)
+	{
+		for(j=0 ; j<width ; j++)
+		{
+			for(k=0 ; k<nChannels ; k++)
+			{
+				diff += abs(learned->imageData[i*step+j*nChannels+k] - current->imageData[i*step+j*nChannels+k]);
+			}
+		}
+	}
+	return diff;
 }

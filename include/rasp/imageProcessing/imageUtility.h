@@ -53,3 +53,9 @@ int saveImage(IplImage* imageToSave, int placeNumber, float angle);
  * return the number of similar pixels
  */
 int compareImage(IplImage* current, IplImage* learned);
+
+int diffComparison(IplImage* current, IplImage* learned);
+
+void lowFiltering(int64_t* curve, int64_t* smoothed, int nbrColumn, int size);
+
+void sobel(int64_t* curve, int64_t* derived, int nbrColumn);
