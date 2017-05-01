@@ -1,4 +1,5 @@
 #include "../../../include/rasp/imageProcessing/imageUtility.h"
+#include "../../../include/rasp/imageProcessing/imageStructs.h"
 
 #include <stdio.h>
 
@@ -10,7 +11,7 @@
 
 #include <errno.h>
 
-void sobel(int64_t* curve, int64_t* derived, int nbrColumn)
+void sobel(int64_t *curve, int64_t *derived, int nbrColumn)
 {
 	int i;
 	if(derived == NULL)
@@ -31,7 +32,7 @@ void sobel(int64_t* curve, int64_t* derived, int nbrColumn)
 	derived[i+1] = abs(-curve[i]+curve[i+1]);
 }
 
-void lowFiltering(int64_t* curve, int64_t* smoothed, int nbrColumn, int size)
+void lowFiltering(int64_t *curve, int64_t *smoothed, int nbrColumn, int size)
 {
 	int mean;
 	int i, j;
@@ -57,6 +58,33 @@ void lowFiltering(int64_t* curve, int64_t* smoothed, int nbrColumn, int size)
 		smoothed[i]=mean/(iRight-iLeft+1);
 	}
 }
+
+List *locExtremum(int64_t *curve, int nbrColumn, int threshold)
+{
+	int i;
+	List *llist = NULL;
+	List **current = &llist;
+
+	for(i = 0; i < nbrColumn-1; i++)
+	{
+		if(curve[i]*curve[i+1] < 0)
+		{
+			if(abs(curve[i+1]-curve[i]) > threshold)
+			{
+				*current = (List *) malloc(sizeof(List));
+				
+				(*current)->coord = i;
+				(*current)->next = NULL;
+
+				current = &((*current)->next);
+			}
+		}
+	}
+
+	return llist;
+}
+
+
 
 void getSumColumnValues(IplImage* image, int64_t* columnValues)
 {

@@ -4,6 +4,11 @@
 #define NB_LANDMARKS_MAX 15
 
 typedef struct {
+List *next;
+int coord;
+}List;
+
+typedef struct {
   float angle;
   IplImage* thumbnail;
 }Landmark;
