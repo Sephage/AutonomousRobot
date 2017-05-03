@@ -61,7 +61,7 @@ int close_s(int fd){
 int write_s(int fd, uint8_t *buffer, int nbyte){
 
 	#ifdef DEBUG
-		printf("Envoie de %c à l'arduino %d\n", buffer, fd);
+		printf("Envoie de %d à l'arduino %d\n", buffer[0], fd);
 	#endif
 
 	int val;
