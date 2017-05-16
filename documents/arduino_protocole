@@ -1,0 +1,5 @@
+Commande arduino :
+	
+	- 3 bytes [T][Sign][value] Turn the roomba in the sign direction by the value
+	- 3 bytes [M][Sign][value] Move the roomba in the sign direction by the value
+	- 1 byte  [S] Stop the roomba
