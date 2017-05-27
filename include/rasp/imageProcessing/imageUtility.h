@@ -1,3 +1,6 @@
+#ifndef IMAGEUTILITY_H
+#define IMAGEUTILITY_H
+
 /** 
  * \file frameCapture
  * \brief utility file for basic opencv use 
@@ -62,4 +65,10 @@ void lowFiltering(int64_t* curve, int64_t* smoothed, int nbrColumn, int size);
 
 void sobel(int64_t* curve, int64_t* derived, int nbrColumn);
 
-List *locExtremum(int64_t *curve, int nbrColumn, int threshold);
+Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbrColumn, int threshold);
+
+static int compare (void const *a, void const *b);
+
+void learnLocation();
+
+#endif

@@ -5,11 +5,15 @@
 
 /*For saving functions*/
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-
 #include <errno.h>
+#include <math.h>
+
+#define __DEBUG
+
+
 
 void sobel(int64_t *curve, int64_t *derived, int nbrColumn)
 {
@@ -21,15 +25,15 @@ void sobel(int64_t *curve, int64_t *derived, int nbrColumn)
 	}
 
 	//Calcul du premier élément en créant une redondance de l'information
-	derived[0] = abs(-curve[0]+curve[1]);
+	derived[0] = -curve[0]+curve[1];
 
 	for(i=1;i<nbrColumn-1;i++)
 	{
-		derived[i] = abs(-curve[i-1]+curve[i+1]);
+		derived[i] = -curve[i-1]+curve[i+1];
 	}
 
 	//Calcul du dernier élément en créant une redondance de l'information
-	derived[i+1] = abs(-curve[i]+curve[i+1]);
+	derived[i+1] = -curve[i]+curve[i+1];
 }
 
 void lowFiltering(int64_t *curve, int64_t *smoothed, int nbrColumn, int size)
@@ -59,32 +63,86 @@ void lowFiltering(int64_t *curve, int64_t *smoothed, int nbrColumn, int size)
 	}
 }
 
-List *locExtremum(int64_t *curve, int nbrColumn, int threshold)
+Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbrColumn, int threshold)
 {
-	int i;
-	List *llist = NULL;
-	List **current = &llist;
+	int i, p;
+	int *locations;
+	Interest *extremums;
+
+
+	p = 0;
+	locations = (int *) malloc(nbrColumn*sizeof(int));
+
+	for(i = 0; i < nbrColumn; i++)
+	{
+		locations[i] = -1;
+	}
+
 
 	for(i = 0; i < nbrColumn-1; i++)
 	{
-		if(curve[i]*curve[i+1] < 0)
+		if(derived[i]*derived[i+1] < 0)
 		{
-			if(abs(curve[i+1]-curve[i]) > threshold)
+			if(abs(derived[i+1]-derived[i]) > threshold)
 			{
-				*current = (List *) malloc(sizeof(List));
-				
-				(*current)->coord = i;
-				(*current)->next = NULL;
+				locations[p] = i;
 
-				current = &((*current)->next);
+				p++;
 			}
 		}
 	}
 
-	return llist;
+	extremums = malloc(p*sizeof(Interest));
+	*nbrElt = p;
+
+	while(--p >= 0)
+	{
+		extremums[p].index = locations[p];
+		extremums[p].value = abs(derived[locations[i]+1]-derived[locations[i]]);
+		//extremums[p].value = curve[p];
+	}
+
+	free(locations);
+
+	return extremums;
 }
 
+static int compare (void const *a, void const *b)
+{
+   Interest const *pa = a;
+   Interest const *pb = b;
 
+   return pa->value - pb->value;
+}
+
+IplImage *semilogThumbnail(IplImage *image, int position)
+{
+	int row;
+	int i, j ,k;
+	int thumbHeight;
+	IplImage *thumbnail = 0;
+	int height = image->height;
+	int hundreds = floor(height/100.);
+	
+	thumbHeight = 19 + hundreds - 1;
+
+	thumbnail = cvCreateImage(cvSize(32, thumbHeight), IPL_DEPTH_8U, 1);
+	if(thumbnail == 0)
+	{
+		fputs("Image in semilogThumbnail was not created successfully\n", stderr);
+		return ;
+	}
+
+	for(i = position-16; i < position+16; i++)
+	{
+		for(j = 0; j < thumbHeight; j++)
+		{
+			#ifdef __DEBUG
+			printf("Row : %d, Column : %d\n", row, i);
+			#endif
+		}
+	}
+}
 
 void getSumColumnValues(IplImage* image, int64_t* columnValues)
 {
@@ -258,4 +316,73 @@ int diffComparison(IplImage* current, IplImage* learned){
 		}
 	}
 	return diff;
+}
+
+void learnLocation()
+{
+	IplImage *thumbnail = 0;
+	Interest *extremums;
+	IplImage *image = 0;
+	IplImage *gray = 0;
+	CvCapture *capture;
+	int64_t *sumColumn;
+	int64_t *smoothed;
+	int64_t *derived;
+	char path[100];
+	int nbrElt;
+	int i;
+
+
+
+	capture = cvCaptureFromCAM(1);
+	image = cvQueryFrame(capture);
+	if(!image)
+	{
+		puts("Image fail to load");
+		exit(1);
+	}
+
+	gray = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1);
+	cvCvtColor(image, gray, CV_RGB2GRAY);
+
+	sumColumn = malloc(image->width * sizeof(int64_t));
+	smoothed = malloc(image->width * sizeof(int64_t));
+	derived = malloc(image->width * sizeof(int64_t));
+
+
+
+	getSumColumnValues(gray, sumColumn);
+	lowFiltering(sumColumn, smoothed, image->width, SMOOTHNESS);
+	sobel(smoothed, derived, image->width);
+	extremums = extremumExtract(sumColumn, derived, &nbrElt, image->width, SLOPE);
+	qsort((void *) extremums, nbrElt, sizeof(Interest), compare);
+
+	#ifdef __DEBUG
+	IplImage *graph = 0;
+	graph = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 1);	
+	printGraphOnImage(graph, smoothed);
+	cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
+	cvReleaseImage(&graph);
+	#endif
+
+
+
+	for(i  = 0; i < NB_LANDMARKS_MAX && i < nbrElt; i++)
+	{
+		sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
+
+		thumbnail = getThumbnail(image, extremums[i].index, 350);
+		cvSaveImage(path, thumbnail, 0);
+		cvReleaseImage(&thumbnail);
+	}
+
+	cvSaveImage("../saveImages/image.jpg", image, 0);
+
+
+
+	cvReleaseImage(&image);
+	cvReleaseImage(&gray);
+	free(sumColumn);
+	free(smoothed);
+	free(derived);
 }
