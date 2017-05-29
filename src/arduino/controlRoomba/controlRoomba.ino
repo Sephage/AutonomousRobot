@@ -176,7 +176,7 @@ void loop(){
       else if(msg[1]==45) { // présence of sign "-"
         sign = -1;
       }
-      byte1 = 0;// msg[2];
+      byte1 = msg[2];
       byte2 = msg[3];
       value = sign * (byte1 * 256 + byte2);
       Serial.println(value);
