@@ -1,9 +1,16 @@
-const int lenghtMsgmax = 3;
-char msg[lenghtMsgmax];
+#define PI 3.141592
+
+const int lenghtMsgmax = 4;
+unsigned char msg[lenghtMsgmax];
 int nbBytesRecus=0;
+float angle = 0;
+int wheelBase = 223;
+float mmpd = (float)(wheelBase * PI / 360.0);
+int speedTurn = 300;
 
 
-//############################     FONCTIONS CONNEXION  REVEIL ROOMBA       ##################################
+
+//############################     SETUP FUNCTIONS      ##################################
 
 //start the communication with the roomba
 void rStart (){
@@ -23,7 +30,7 @@ void rSafe(){
   delay(50);
 }
 
-//#############################    COMMAND GENERIQUE DE DÉPLACEMENT R_DRIVE    ###########################
+//#############################    ROOMBA COMMAND FUNCTIONS  ###########################
 
 //command motor function
 void drive(uint16_t velocity1, uint16_t velocity2){
@@ -43,6 +50,36 @@ void drive(uint16_t velocity1, uint16_t velocity2){
      Serial1.flush();
 }
 
+void drive2(uint16_t velocity, uint16_t radius){
+  // velocity from -255 to +255 mm/s
+
+    int v_high = (velocity >> 8 ) & 255;
+    int v_low = velocity & 255;
+    int r_high = (radius >> 8) & 255;
+    int r_low = radius & 255;
+
+     Serial1.write(137);      
+    Serial1.write(v_high);
+     Serial1.write(v_low);
+     Serial1.write(r_high);
+     Serial1.write(r_low);
+     delay(10);
+     Serial1.flush();
+}
+
+void turn(int angle){
+  float pauseTime;
+  int dir = -1;
+  if(angle < 0){
+    angle *= -1;
+    dir = 1;
+  }
+  pauseTime = (mmpd * angle / speedTurn);
+  drive2(speedTurn, dir);
+  delay((int)(pauseTime * 1000));
+  drive(0,0);
+}
+
 //Do the action asked
 void cmd(int id, int value){
   switch(id){
@@ -50,13 +87,43 @@ void cmd(int id, int value){
       drive(value,value);
       break;
     case 2:
-      drive(value, -value);
+      turn(value);
+      angle += value;
+      if(angle < 0){
+        angle = 360 - angle;
+      }
+      else if(angle > 360){
+        angle -= 360;
+      }
       break;
     case 3:
       drive(0,0);
       break;
+    case 4:
+      Serial.print(angle);
+      break;
   }  
 }
+
+
+//#############################    ROOMBA SENSORS FUNCTIONS  ###########################
+
+unsigned int readEncoder(){
+  unsigned int result = 0;
+  Serial1.write(142);
+  Serial1.write(44);
+  delay(50);
+  
+  if (Serial1.available() >= 2){
+    unsigned char readByte1 = Serial1.read();
+    unsigned char readByte2 = Serial1.read();
+
+    result = (readByte1 <<8) + readByte2;
+  }
+  Serial1.flush();
+  return result;
+}
+
 
 void setup(){
   Serial.begin(115200);
@@ -67,26 +134,29 @@ void setup(){
   }
   
   rStart();
-  rFull();
+  rSafe();
 }
 
 void loop(){
+  int byte1 = 0;
+  int byte2 = 0;
   int value = 0;
-  int id = 0; // 1 = move - 2 = turn - 3 = stop
+  int sign = 0;
+  int id = 0; // 1 = move - 2 = turn - 3 = stop - 4 = askAngle
   while (Serial.available() > 0){
-    if(nbBytesRecus==3){
+    if(nbBytesRecus==lenghtMsgmax){
       nbBytesRecus = 0;
     }
     for (int i=0; i<lenghtMsgmax; i++) { //read the inpu       
       if (Serial.available() > 0) {
-        char readByte = Serial.read();
+        unsigned char readByte = Serial.read();
         nbBytesRecus++;
         msg[i] = readByte;
         delay(10);
       }        
     }
     
-    if(nbBytesRecus==3){
+    if(nbBytesRecus==lenghtMsgmax){
       // Get the type of command asked
       if(msg[0] == 109){ //Command move
         id = 1;
@@ -97,15 +167,21 @@ void loop(){
       else if(msg[0] == 115){ //Command stop
         id = 3;
       }
+      else if(msg[0] == 97){ //ask angle
+        id = 4;
+      }
       if(msg[1]==43) { // présence of sign "+"
-        value = int(msg[2]);
+        sign = 1;
       }
       else if(msg[1]==45) { // présence of sign "-"
-        value = - (int(msg[2]));
+        sign = -1;
       }
+      byte1 = 0;// msg[2];
+      byte2 = msg[3];
+      value = sign * (byte1 * 256 + byte2);
+      Serial.println(value);
       cmd(id,value);
       Serial.flush();
     }
   }
-  
 }
