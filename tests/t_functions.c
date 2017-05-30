@@ -1,4 +1,4 @@
-#include "t_logs.h"
+#include "t_functions.h"
 
 int testLogs() {
   const char *logFilePath = "../Logs/TestLogs/t_logsTest.log";
@@ -7,13 +7,13 @@ int testLogs() {
   Log *logs = NULL;
   FILE *logFile = NULL;
   char *rmessage = (char *)malloc(wmessageLen*sizeof(char));
-  int nbOfDirectories;
+//  int nbOfCreateErrors;
 
   /* createLogDirectories already got called in the main Function
     so we can just check the return value instead of checking
     each mkdir, one by one */
-  nbOfDirectories = createLogDirectories();
-  if(nbOfDirectories == (-3) ){
+/*  nbOfCreateErrors = createLogDirectories();
+  if(nbOfCreateErrors == (-3) ){
     printf("createLogDirectories = OK\n");
   }
   else {
@@ -21,7 +21,7 @@ int testLogs() {
     logs = closeLogFile(logs);
     free(rmessage);
     return -1;
-  }
+  }*/
 
   logs = initialiseLogFile(logFilePath);
   if((strcmp(logs->logFilePath, logFilePath) == 0)
@@ -40,7 +40,7 @@ int testLogs() {
   logs = closeLogFile(logs);
 
   logFile = fopen(logFilePath, "rb");
-  fseek(logFile, -wmessageLen, SEEK_END);
+  fseek(logFile, -wmessageLen - (53*3), SEEK_END);
   fread(rmessage, sizeof(char), strlen(wmessage), logFile);
   if((strcmp(rmessage, wmessage) == 0)) {
     printf("writeLogFile = OK\n");
@@ -62,6 +62,48 @@ int testLogs() {
   }
 
   free(rmessage);
+
+  return 0;
+}
+
+int testServer() {
+  Server server;
+  char sendMsg[] = "End";
+  int returnCode = initialiseServer(&server);
+  int closeValue;
+
+  if(returnCode != 0) {
+    printf("initialiseServer = NOTOK, return Code is %d, should be 0.\n", returnCode);
+    return -1;
+  }
+
+  char *rmess1 = receiveFromClient(server);
+  printf("Received msg 1 from client\n");
+//  sendEndMsgToClient(server, sendMsg);
+//  printf("Sent msg 1 from client");
+  char *rmess2 = receiveFromClient(server);
+  printf("Received msg 2 from client\n");
+  strcpy(sendMsg, "Rcd");
+//  sendEndMsgToClient(server, sendMsg);
+//  printf("Sent msg 1 from client");
+  char *rmess3 = receiveFromClient(server);
+  printf("Received msg 3 from client\n");
+  if((strcmp(rmess1, "Lea") == 0) && (strcmp(rmess2, "Aut") == 0) && (strcmp(rmess3, "Stp") == 0)) {
+    printf("sendEndMsg and receiveFromClient = OK.\n");
+  }
+  else {
+    printf("sendEndMsg and receiveFromClient = NOTOK. Messages received are %s, %s and %s, should be Lea, Aut, and Stp.\n", rmess1, rmess2, rmess3);
+    return -2;
+  }
+
+  closeValue = closeServer(&server);
+  if(closeValue == 0) {
+    printf("closeServer = OK.\n");
+  }
+  else {
+    printf("closeServer = NOTOK. Socket value is %d.\n", server.sckt);
+    return -3;
+  }
 
   return 0;
 }
