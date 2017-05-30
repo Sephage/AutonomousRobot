@@ -1,5 +1,3 @@
-#define PI 3.141592
-
 const int lenghtMsgmax = 4;
 unsigned char msg[lenghtMsgmax];
 int nbBytesRecus=0;
@@ -60,7 +58,7 @@ void drive2(uint16_t velocity, uint16_t radius){
     int r_low = radius & 255;
 
      Serial1.write(137);      
-    Serial1.write(v_high);
+     Serial1.write(v_high);
      Serial1.write(v_low);
      Serial1.write(r_high);
      Serial1.write(r_low);
@@ -68,8 +66,13 @@ void drive2(uint16_t velocity, uint16_t radius){
      Serial1.flush();
 }
 
-void driveMMS(uint16_t value){
-  drive(speedDrive, speedDrive);
+void driveMMS(int value){
+  int moveSpeed = speedDrive;
+  if(value < 0){
+    moveSpeed = -speedDrive;
+    value *= -1;
+  }
+  drive(moveSpeed, moveSpeed);
   delay(value);
   drive(0,0);
 }
@@ -137,7 +140,7 @@ unsigned int readEncoder(){
 
 
 void setup(){
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial1.begin(115200);
   
   for (int i=0; i<lenghtMsgmax; i++) {
