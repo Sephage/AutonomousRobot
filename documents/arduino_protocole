@@ -2,7 +2,8 @@ Commande arduino :
 
 All the command must hav 4 byte so complete with 0 (exemple stop : S000)
 	
-	- 4 bytes [t][Sign][valueHighByte][valueLowByte] Turn the roomba in the sign direction by the value
-	- 4 bytes [m][Sign][valueHighByte][valueLowByte] Move the roomba in the sign direction by the value
-	- 1 byte  [s] Stop the roomba
-	- 1 byte  [a] Ask the angle of the roomba
+	- Turn	4 bytes [t][Sign][valueHighByte][valueLowByte] Turn the roomba in the sign direction by the value (from -500 to 500 mmps)
+	- Drive 4 bytes [d][Sign][durationHighByte][durationLowByte] Move the roomba for the duration given (in millisecond)
+	- Move	4 bytes [m][Sign][valueHighByte][valueLowByte] Move the roomba in the sign direction by the value
+	- Stop	1 byte  [s] Stop the roomba
+	- Angle	1 byte  [a] Ask the angle of the roomba

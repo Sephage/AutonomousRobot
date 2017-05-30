@@ -7,6 +7,7 @@ float angle = 0;
 int wheelBase = 223;
 float mmpd = (float)(wheelBase * PI / 360.0);
 int speedTurn = 300;
+int speedDrive = 200;
 
 
 
@@ -67,6 +68,12 @@ void drive2(uint16_t velocity, uint16_t radius){
      Serial1.flush();
 }
 
+void driveMMS(uint16_t value){
+  drive(speedDrive, speedDrive);
+  delay(value);
+  drive(0,0);
+}
+
 void turn(int angle){
   float pauseTime;
   int dir = -1;
@@ -102,6 +109,10 @@ void cmd(int id, int value){
     case 4:
       Serial.print(angle);
       break;
+    case 5:
+      driveMMS(value);
+      break;
+      
   }  
 }
 
@@ -142,7 +153,7 @@ void loop(){
   int byte2 = 0;
   int value = 0;
   int sign = 0;
-  int id = 0; // 1 = move - 2 = turn - 3 = stop - 4 = askAngle
+  int id = 0; // 1 = move - 2 = turn - 3 = stop - 4 = askAngle - 5 = drive
   while (Serial.available() > 0){
     if(nbBytesRecus==lenghtMsgmax){
       nbBytesRecus = 0;
@@ -170,6 +181,9 @@ void loop(){
       else if(msg[0] == 97){ //ask angle
         id = 4;
       }
+      else if(msg[0] == 100){ //drive for specific duration
+        id = 5;
+      }
       if(msg[1]==43) { // présence of sign "+"
         sign = 1;
       }
@@ -179,7 +193,6 @@ void loop(){
       byte1 = msg[2];
       byte2 = msg[3];
       value = sign * (byte1 * 256 + byte2);
-      Serial.println(value);
       cmd(id,value);
       Serial.flush();
     }
