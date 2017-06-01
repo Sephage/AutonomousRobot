@@ -115,33 +115,36 @@ static int compare (void const *a, void const *b)
    return pa->value - pb->value;
 }
 
-IplImage *semilogThumbnail(IplImage *image, int position)
+IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
 {
-	int row;
-	int i, j ,k;
-	int thumbHeight;
+	int i, j;
 	IplImage *thumbnail = 0;
-	int height = image->height;
-	int hundreds = floor(height/100.);
-	
-	thumbHeight = 19 + hundreds - 1;
+	int thumbnailPos, imagePos;
 
-	thumbnail = cvCreateImage(cvSize(32, thumbHeight), IPL_DEPTH_8U, 1);
+	if(widthPos < 32 || widthPos >= image->width-32)
+	{
+		fputs("This position is not permitted in compressedThumbnail\n",stderr);
+		return NULL;
+	}
+
+	thumbnail = cvCreateImage(cvSize(32, 32), IPL_DEPTH_8U, 1);
 	if(thumbnail == 0)
 	{
-		fputs("Image in semilogThumbnail was not created successfully\n", stderr);
-		return ;
+		fputs("Allocation failed in compressedThumbnail\n",stderr);
+		return NULL;
 	}
 
-	for(i = position-16; i < position+16; i++)
+	for(i = 0; i < 32; i++)
 	{
-		for(j = 0; j < thumbHeight; j++)
+		for(j = 0; j < 32; j++)
 		{
-			#ifdef __DEBUG
-			printf("Row : %d, Column : %d\n", row, i);
-			#endif
+			thumbnailPos = i * thumbnail->widthStep + j;
+			imagePos = (4 * i + heightPos - 64) * image->widthStep + (2 * j + widthPos - 32);
+			thumbnail->imageData[thumbnailPos]=image->imageData[imagePos];
 		}
 	}
+
+	return thumbnail;
 }
 
 void getSumColumnValues(IplImage* image, int64_t* columnValues)
@@ -334,7 +337,7 @@ void learnLocation()
 
 
 
-	capture = cvCaptureFromCAM(1);
+	capture = cvCaptureFromCAM(0);
 	image = cvQueryFrame(capture);
 	if(!image)
 	{
@@ -371,7 +374,8 @@ void learnLocation()
 	{
 		sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
 
-		thumbnail = getThumbnail(image, extremums[i].index, 350);
+		printf("%d\n", extremums[i].index);
+		thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
 		cvSaveImage(path, thumbnail, 0);
 		cvReleaseImage(&thumbnail);
 	}
