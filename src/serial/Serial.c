@@ -2,18 +2,28 @@
 
 #define DEBUG
 
-int open_s(char *name){
+int open_s(){
 
 	struct termios toptions ;
 	int fd;
+	int i;
+	char name[10];
 
-	#ifdef DEBUG
-	printf("Open serial : %s\n", name) ;
-	#endif
+	int success = 0;
+	for(i = 0; (i < 10) && (success < 1); i++){
+		char port[10];
+		sprintf(port, "/dev/ttyACM%d", i);
+		if((fd = open(port, O_RDWR | O_NONBLOCK))== -1){
 
-	if((fd = open(name, O_RDWR | O_NONBLOCK))== -1){
-		printf("Error opening %s\n", name);
-		return -1;
+			printf("Error opening %s\n", port);
+		}
+		else{
+			success = 1;
+			strcpy(name, port);
+			#ifdef DEBUG
+			printf("Open serial : %s\n", port) ;
+			#endif
+		}
 	}
 
 	#ifdef DEBUG
@@ -83,28 +93,29 @@ int write_s(int fd, uint8_t *buffer, int nbyte){
 	return val;
 }
 
-int read_s(int fd, uint8_t *buffer, int nbyte){
-	uint8_t* car = (uint8_t*)malloc(1);
-	if(read(fd,car,0) == -1){
-		printf("Erreur reading file");
-		free(car);
-		return -1;
-	}
-	while(*car != '#'){
-		read(fd,car,1);
-	}
-	int cpt=0;
-	while(*car != '!' && cpt < nbyte){
-		if(read(fd, car, 1) == 1){
-			*(buffer + cpt) = *car;
-			cpt++;
-		}
-	}
-	free(car);
+int read_s(int fd, uint8_t *buffer, int nbyte, int timeout){
+
+	char b[1];  // read expects an array, so we give it a 1-byte array
+	int i=0;
+  do {
+      int n = read(fd, b, 1);  // read a char at a time
+      if( n==-1){
+				 return -1;    // couldn't read
+			}
+      if( n==0 ) {
+        usleep( 1 * 1000 );  // wait 1 msec try again
+        timeout--;
+        if( timeout==0 ) return -2;
+        continue;
+      }
+      buffer[i] = b[0];
+      i++;
+  } while(timeout>0 && i<nbyte);
 
 	#ifdef DEBUG
 		printf("Reception de %s de l'arduino %d\n", buffer, fd);
 	#endif
+	tcflush(fd, TCIFLUSH);
 	return 1;
 }
 
@@ -169,4 +180,20 @@ int turn(int fd, int angle, uint8_t *buffer){
 	int val = write_s(fd, buffer, 4);
 
 	return val;
+}
+
+int askAngle(int fd, uint8_t *bufferW, uint8_t *bufferR){
+	int angle;
+	bufferW[0] = 'a';
+	bufferW[1] = 0;
+	bufferW[2] = 0;
+	bufferW[3] = 0;
+
+	int val = write_s(fd, bufferW, 4);
+
+	int val2 = read_s(fd, bufferR, 10, 200);
+
+	angle = atof(bufferR);
+
+	return angle;
 }

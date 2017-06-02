@@ -1,3 +1,11 @@
+#include <Wire.h>
+#include <HMC5883L.h>
+
+// Store our compass as a variable.
+HMC5883L compass;
+// Record any errors that may occur in the compass.
+int error = 0;
+
 const int lenghtMsgmax = 4;
 unsigned char msg[lenghtMsgmax];
 int nbBytesRecus=0;
@@ -6,6 +14,7 @@ int wheelBase = 223;
 float mmpd = (float)(wheelBase * PI / 360.0);
 int speedTurn = 300;
 int speedDrive = 200;
+unsigned char wall = 0;
 
 
 
@@ -98,18 +107,20 @@ void cmd(int id, int value){
       break;
     case 2:
       turn(value);
-      angle += value;
+      /*angle += value;
       if(angle < 0){
         angle = 360 - angle;
       }
       else if(angle > 360){
         angle -= 360;
-      }
+      }*/
       break;
     case 3:
       drive(0,0);
       break;
     case 4:
+      //Serial.print(((angle >> 8) & 255));
+      //Serial.print((angle & 255));
       Serial.print(angle);
       break;
     case 5:
@@ -120,28 +131,73 @@ void cmd(int id, int value){
 }
 
 
-//#############################    ROOMBA SENSORS FUNCTIONS  ###########################
+//#############################   SENSORS FUNCTIONS  ###########################
 
-unsigned int readEncoder(){
-  unsigned int result = 0;
+void askSensor(int id){
   Serial1.write(142);
-  Serial1.write(44);
+  Serial1.write(id);
   delay(50);
   
-  if (Serial1.available() >= 2){
-    unsigned char readByte1 = Serial1.read();
-    unsigned char readByte2 = Serial1.read();
-
-    result = (readByte1 <<8) + readByte2;
-  }
   Serial1.flush();
-  return result;
 }
 
+float readCompass(){
+  // Retrive the raw values from the compass (not scaled).
+  MagnetometerRaw raw = compass.readRawAxis();
+  // Retrived the scaled values from the compass (scaled to the configured scale).
+  MagnetometerScaled scaled = compass.readScaledAxis();
+  
+  // Values are accessed like so:
+  int MilliGauss_OnThe_XAxis = scaled.XAxis;// (or YAxis, or ZAxis)
+
+  // Calculate heading when the magnetometer is level, then correct for signs of axis.
+  float heading = atan2(scaled.YAxis, scaled.XAxis);
+  
+  // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+  // Find yours here: http://www.magnetic-declination.com/
+  // Mine is: -2��37' which is -2.617 Degrees, or (which we need) -0.0456752665 radians, I will use -0.0457
+  // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+  float declinationAngle = 0.00436332313;
+  heading += declinationAngle;
+  
+  // Correct for when signs are reversed.
+  if(heading < 0)
+    heading += 2*PI;
+    
+  // Check for wrap due to addition of declination.
+  if(heading > 2*PI)
+    heading -= 2*PI;
+   
+  // Convert radians to degrees for readability.
+  float headingDegrees = heading * 180/M_PI; 
+
+  delay(100);//of course it can be delayed longer.
+  
+  return headingDegrees;
+}
+
+void readSensors(){
+  askSensor(7);
+  if(Serial1.available()){
+    wall = Serial1.read() ;
+  }
+  float compass = readCompass();
+  angle = compass;
+  //Serial.println((angle >> 8) & 255);
+  //Serial.println(angle & 255);
+}
+  
+  
+//########################## SETUP AND LOOP  ##########################
 
 void setup(){
   Serial.begin(9600);
   Serial1.begin(115200);
+  
+  //Compass setup
+  Wire.begin(); // Start the I2C interface.
+  error = compass.setScale(1.3); // Set the scale of the compass.
+  error = compass.setMeasurementMode(MEASUREMENT_CONTINUOUS);
   
   for (int i=0; i<lenghtMsgmax; i++) {
     msg[i] = -1;
@@ -200,4 +256,5 @@ void loop(){
       Serial.flush();
     }
   }
+  readSensors();
 }
