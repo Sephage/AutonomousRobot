@@ -72,9 +72,3 @@ dkms.conf
 
 #build directory
 build/*
-
-# Results #
-###########
-saveImages/*
-
-*~

@@ -15,13 +15,13 @@ typedef struct {
 
 typedef struct {
   float angle;
-  IplImage* thumbnail;
+  IplImage *thumbnail;
 }Landmark;
 
 typedef struct {
   Landmark landmarks[NB_LANDMARKS_MAX];
   float movementVectorAngle;
-  int landmarksSize;
+  int landmarksNbr;
 }Place;
 
 #endif
