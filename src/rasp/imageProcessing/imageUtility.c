@@ -79,6 +79,7 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
     }
 
 
+<<<<<<< HEAD
     for(i = 0; i < nbrColumn-1; i++)
     {
         if(derived[i]*derived[i+1] < 0)
@@ -86,6 +87,15 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
             if(abs(derived[i+1]-derived[i]) > threshold)
             {
                 locations[p] = i;
+=======
+	for(i = 32; i < nbrColumn-33; i++)
+	{
+		if(derived[i]*derived[i+1] < 0)
+		{
+			if(abs(derived[i+1]-derived[i]) > threshold)
+			{
+				locations[p] = i;
+>>>>>>> c09e4de41de2752ec6b1d6fb10a81d0393505cf1
 
                 p++;
             }
@@ -115,8 +125,9 @@ static int compare (void const *a, void const *b)
     return pa->value - pb->value;
 }
 
-IplImage *semilogThumbnail(IplImage *image, int position)
+IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
 {
+<<<<<<< HEAD
     int row;
     int i, j ,k;
     int thumbHeight;
@@ -142,6 +153,36 @@ IplImage *semilogThumbnail(IplImage *image, int position)
 #endif
         }
     }
+=======
+	int i, j;
+	IplImage *thumbnail = 0;
+	int thumbnailPos, imagePos;
+
+	if(widthPos < 32 || widthPos >= image->width-32)
+	{
+		fputs("This position is not permitted in compressedThumbnail\n",stderr);
+		return NULL;
+	}
+
+	thumbnail = cvCreateImage(cvSize(32, 32), IPL_DEPTH_8U, 1);
+	if(thumbnail == 0)
+	{
+		fputs("Allocation failed in compressedThumbnail\n",stderr);
+		return NULL;
+	}
+
+	for(i = 0; i < 32; i++)
+	{
+		for(j = 0; j < 32; j++)
+		{
+			thumbnailPos = i * thumbnail->widthStep + j;
+			imagePos = (4 * i + heightPos - 64) * image->widthStep + (2 * j + widthPos - 32);
+			thumbnail->imageData[thumbnailPos]=image->imageData[imagePos];
+		}
+	}
+
+	return thumbnail;
+>>>>>>> c09e4de41de2752ec6b1d6fb10a81d0393505cf1
 }
 
 void getSumColumnValues(IplImage* image, int64_t* columnValues)
@@ -339,8 +380,9 @@ int diffComparison(IplImage* current, IplImage* learned){
     return diff;
 }
 
-void learnLocation()
+int learnLocation()
 {
+<<<<<<< HEAD
     IplImage *thumbnail = 0;
     Interest *extremums;
     IplImage *image = 0;
@@ -362,6 +404,32 @@ void learnLocation()
         puts("Image fail to load");
         exit(1);
     }
+=======
+	IplImage *thumbnail = 0;
+	Interest *extremums;
+	IplImage *image = 0;
+	IplImage *gray = 0;
+	CvCapture *capture;
+	int64_t *sumColumn;
+	int64_t *smoothed;
+	int64_t *derived;
+	int nbrLandmarks;
+	char path[100];
+	int nbrElt;
+	int i;
+
+
+
+	nbrLandmarks = 0;
+
+	capture = cvCaptureFromCAM(0);
+	image = cvQueryFrame(capture);
+	if(!image)
+	{
+		puts("Image fail to load");
+		exit(1);
+	}
+>>>>>>> c09e4de41de2752ec6b1d6fb10a81d0393505cf1
 
     gray = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1);
     cvCvtColor(image, gray, CV_RGB2GRAY);
@@ -388,6 +456,7 @@ void learnLocation()
 
 
 
+<<<<<<< HEAD
     for(i  = 0; i < NB_LANDMARKS_MAX && i < nbrElt; i++)
     {
         sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
@@ -396,14 +465,37 @@ void learnLocation()
         cvSaveImage(path, thumbnail, 0);
         cvReleaseImage(&thumbnail);
     }
+=======
+	mkdir("../saveImages/thumbnails", 0777);
+	for(i  = 0; i < NB_LANDMARKS_MAX && i < nbrElt; i++)
+	{
+		sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
+
+		thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
+		cvSaveImage(path, thumbnail, 0);
+		cvReleaseImage(&thumbnail);
+
+		nbrLandmarks++;
+	}
+>>>>>>> c09e4de41de2752ec6b1d6fb10a81d0393505cf1
 
     cvSaveImage("../saveImages/image.jpg", image, 0);
 
 
 
+<<<<<<< HEAD
     cvReleaseImage(&image);
     cvReleaseImage(&gray);
     free(sumColumn);
     free(smoothed);
     free(derived);
+=======
+	cvReleaseImage(&image);
+	cvReleaseImage(&gray);
+	free(sumColumn);
+	free(smoothed);
+	free(derived);
+
+	return nbrLandmarks;
+>>>>>>> c09e4de41de2752ec6b1d6fb10a81d0393505cf1
 }
