@@ -182,6 +182,23 @@ int turn(int fd, int angle, uint8_t *buffer){
 	return val;
 }
 
+int turnServo(int fd, int angle, uint8_t *buffer){
+	buffer[0] = 'c';
+
+	buffer[1] = 43;
+	if(angle < 0 ){
+		buffer[1] = 45;
+		angle = -angle;
+	}
+
+	buffer[2] = (angle >> 8) & 255;
+	buffer[3] = angle & 255;
+
+	int val = write_s(fd, buffer, 4);
+
+	return val;
+}
+
 int askAngle(int fd, uint8_t *bufferW, uint8_t *bufferR){
 	int angle;
 	bufferW[0] = 'a';

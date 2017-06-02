@@ -20,5 +20,6 @@ int driveMMS(int fd, int duration, uint8_t *buffer);
 int stop(int fd, uint8_t *buffer);
 int turn(int fd, int angle, uint8_t *buffer);
 int askAngle(int fd, uint8_t *bufferW, uint8_t *bufferR);
+int turnServo(int fd, int angle, uint8_t *buffer);
 
 #endif

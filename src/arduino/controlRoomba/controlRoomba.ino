@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include <HMC5883L.h>
+#include <Servo.h> 
 
 // Store our compass as a variable.
 HMC5883L compass;
@@ -15,6 +16,8 @@ float mmpd = (float)(wheelBase * PI / 360.0);
 int speedTurn = 300;
 int speedDrive = 200;
 unsigned char wall = 0;
+
+Servo myservo;
 
 
 
@@ -119,15 +122,25 @@ void cmd(int id, int value){
       drive(0,0);
       break;
     case 4:
-      //Serial.print(((angle >> 8) & 255));
-      //Serial.print((angle & 255));
       Serial.print(angle);
       break;
     case 5:
       driveMMS(value);
       break;
+    case 6:
+      turnServo(value);
       
   }  
+}
+
+void turnServo(int angle){
+  if(angle > 180){
+    angle = 180;
+  }
+  if(angle < 0){
+    angle = 0;
+  }
+  myservo.write(angle);
 }
 
 
@@ -199,6 +212,8 @@ void setup(){
   error = compass.setScale(1.3); // Set the scale of the compass.
   error = compass.setMeasurementMode(MEASUREMENT_CONTINUOUS);
   
+  myservo.attach(8);
+  
   for (int i=0; i<lenghtMsgmax; i++) {
     msg[i] = -1;
   }
@@ -212,7 +227,7 @@ void loop(){
   int byte2 = 0;
   int value = 0;
   int sign = 0;
-  int id = 0; // 1 = move - 2 = turn - 3 = stop - 4 = askAngle - 5 = drive
+  int id = 0; // 1 = move - 2 = turn - 3 = stop - 4 = askAngle - 5 = drive - 6 turn servo
   while (Serial.available() > 0){
     if(nbBytesRecus==lenghtMsgmax){
       nbBytesRecus = 0;
@@ -243,6 +258,9 @@ void loop(){
       else if(msg[0] == 100){ //drive for specific duration
         id = 5;
       }
+      else if(msg[0] == 99){ //turn the servo motor
+        id = 6;
+      }
       if(msg[1]==43) { // présence of sign "+"
         sign = 1;
       }
@@ -253,7 +271,7 @@ void loop(){
       byte2 = msg[3];
       value = sign * (byte1 * 256 + byte2);
       cmd(id,value);
-      Serial.flush();
+      //Serial.flush();
     }
   }
   readSensors();
