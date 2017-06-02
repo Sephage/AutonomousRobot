@@ -79,7 +79,7 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
 	}
 
 
-	for(i = 0; i < nbrColumn-1; i++)
+	for(i = 32; i < nbrColumn-33; i++)
 	{
 		if(derived[i]*derived[i+1] < 0)
 		{
@@ -321,7 +321,7 @@ int diffComparison(IplImage* current, IplImage* learned){
 	return diff;
 }
 
-void learnLocation()
+int learnLocation()
 {
 	IplImage *thumbnail = 0;
 	Interest *extremums;
@@ -331,11 +331,14 @@ void learnLocation()
 	int64_t *sumColumn;
 	int64_t *smoothed;
 	int64_t *derived;
+	int nbrLandmarks;
 	char path[100];
 	int nbrElt;
 	int i;
 
 
+
+	nbrLandmarks = 0;
 
 	capture = cvCaptureFromCAM(0);
 	image = cvQueryFrame(capture);
@@ -375,10 +378,11 @@ void learnLocation()
 	{
 		sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
 
-		printf("%d\n", extremums[i].index);
 		thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
 		cvSaveImage(path, thumbnail, 0);
 		cvReleaseImage(&thumbnail);
+
+		nbrLandmarks++;
 	}
 
 	cvSaveImage("../saveImages/image.jpg", image, 0);
@@ -390,4 +394,6 @@ void learnLocation()
 	free(sumColumn);
 	free(smoothed);
 	free(derived);
+
+	return nbrLandmarks;
 }
