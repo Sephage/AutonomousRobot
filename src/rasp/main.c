@@ -2,6 +2,7 @@
 #include "../../include/rasp/imageProcessing/imageUtility.h"
 #include "../../include/serial/Serial.h"
 #include "../../include/rasp/modes.h"
+#include "../../include/rasp/server/server.h"
 #include <stdio.h>
 #include <stdio.h>
 #include <cv.h>

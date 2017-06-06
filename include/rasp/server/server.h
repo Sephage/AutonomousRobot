@@ -7,6 +7,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifndef SERVER_H
+#define SERVER_H
+
 #define PORT 9930 // Port the server is listening to, waiting for a client to connect.
 
 #define BUF_SIZE_SEND 4 // size of message to send to the client.
@@ -36,3 +39,5 @@ char* receiveFromClient(Server server);
 int* receiveAngleFromClient(Server server);
 
 int closeServer(Server *server);
+
+#endif
