@@ -254,11 +254,12 @@ int saveImage(Place* place, int placeNumber)
     const char* mVA = "movementVectorAngle ";
     const char* angle = "angle ";
 
-    for(j=0 ; j<NB_LANDMARKS_MAX && place->landmarks[j] != NULL; j++){
-        IplImage imageToSave = place->landmarks[j].thumbnail;
+    for(j=0 ; j<landmarksNbr ; j++){
+        IplImage *imageToSave = place->landmarks[j].thumbnail;
         sprintf(name, "%d_%d.sav", placeNumber,j);
         printf("Creation du fichier\n");
-        file = fopen(name, "w+");
+        cvSaveImage(name, imageToSave, NULL);
+        /*file = fopen(name, "w+");
 
         fwrite(mVA, 20, 1, file);
         fwrite(place->movementVectorAngle, 6, 1, file);
@@ -269,7 +270,7 @@ int saveImage(Place* place, int placeNumber)
         fwrite(imageToSave->height, 5, 1, file);
         fwrite("\n",2,1, file);
 
-        fwrite(imageToSave->data, imageToSave->width*imageToSave->height*imageToSave->nChannels, 1, file);
+        fwrite(imageToSave->data, imageToSave->width*imageToSave->height*imageToSave->nChannels, 1, file);*/
 
         fclose(file);
     }
