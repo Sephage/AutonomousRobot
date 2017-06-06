@@ -1,5 +1,6 @@
 #include "../../../include/rasp/imageProcessing/imageUtility.h"
 #include "../../../include/rasp/imageProcessing/imageStructs.h"
+#include "../../../include/serial/Serial.h"
 
 #include <stdio.h>
 
@@ -13,7 +14,11 @@
 
 #define __DEBUG
 
+IplImage captureAll(int serialD){
+	 IplImage image1, image2, image3, image4;
 
+	 return image1;
+}
 
 void sobel(int64_t *curve, int64_t *derived, int nbrColumn)
 {
@@ -365,7 +370,7 @@ int learnLocation()
 
 	#ifdef __DEBUG
 	IplImage *graph = 0;
-	graph = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 1);	
+	graph = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 1);
 	printGraphOnImage(graph, smoothed);
 	cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
 	cvReleaseImage(&graph);
