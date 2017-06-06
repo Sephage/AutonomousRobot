@@ -1,12 +1,11 @@
 #include "../include/serial/Serial.h"
+#include "../include/rasp/imageProcessing/imageUtility.h"
 
 int main(){
 	int fd = open_s();
 	int val=0;
 
-	uint8_t* buffer = (uint8_t*)malloc(4);
-	uint8_t* buffer2 = (uint8_t*)calloc(10,1);
-	printf("Lu : %d %d %d %d result  %d\n", buffer2[0], buffer2[1], buffer2[2], buffer2[3], val);
+	/*uint8_t* buffer = (uint8_t*)malloc(4);
 	turnServo(fd,90,buffer);
 	driveSpeed(fd, 200, buffer);
 	sleep(2);
@@ -19,12 +18,14 @@ int main(){
 	turn(fd, -180, buffer);
 	sleep(2);
 	turnServo(fd,180,buffer);
-	int angle = askAngle(fd, buffer, buffer2);
-	printf("angle =  %d \n", angle);
+	int angle = askAngle(fd, buffer);
+	printf("angle =  %d \n", angle);*/
+
+	captureAll(fd);
 
 	close_s(fd);
 
-	free(buffer);
+	//free(buffer);
 
 	return 0;
 }

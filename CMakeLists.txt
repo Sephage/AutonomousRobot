@@ -8,11 +8,13 @@ project (datas)
 find_package (OpenCV REQUIRED)
 
 
-# Exécutable "hello", compilé à partir du fichier helloworld.c
+# Creation of executable for the raspberry pi
 add_executable (datas src/rasp/main.c src/rasp/imageProcessing/imageUtility.c src/serial/Serial.c)
 
 
-add_executable (serial tests/serialTest.c src/serial/Serial.c)
+#Creation of executable for serial test
+add_executable (serial tests/serialTest.c src/serial/Serial.c src/rasp/imageProcessing/imageUtility.c)
 
-# Hello sera linké avec les bibliothèques d'OpenCV
+# Linking with opencv and math.h
 target_link_libraries (datas ${OpenCV_LIBS} m)
+target_link_libraries (serial ${OpenCV_LIBS} m)

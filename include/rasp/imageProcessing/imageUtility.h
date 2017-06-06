@@ -1,9 +1,9 @@
 #ifndef IMAGEUTILITY_H
 #define IMAGEUTILITY_H
 
-/** 
+/**
  * \file frameCapture
- * \brief utility file for basic opencv use 
+ * \brief utility file for basic opencv use
  * \author Paul VALENTIN
  * \date 06/12/2016
  */
@@ -15,10 +15,22 @@
 #include <stdio.h>
 
 /*
+ *Capture an image with the camera and return it in gray
+ *
+ */
+IplImage* captureImage();
+
+/*
+ *Capture 3 image by turnig servo motor and return the Concatenated image
+ *
+ */
+IplImage* captureAll(int serialD);
+
+/*
  * take an image and fill the array with the sum of columns for each column in the image
  *
  * image : the captured image
- * columnValues : The array to fill 
+ * columnValues : The array to fill
  * 		HAVE TO BE DECLARED AT THE JUST SIZE
  */
 void getSumColumnValues(IplImage* image, int64_t* columnValues);

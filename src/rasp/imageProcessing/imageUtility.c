@@ -14,10 +14,51 @@
 
 #define __DEBUG
 
-IplImage captureAll(int serialD){
-	 IplImage image1, image2, image3, image4;
+IplImage* captureImage(){
+	IplImage *image = 0;
+ 	IplImage *gray = 0;
+ 	CvCapture *capture;
 
-	 return image1;
+ 	capture = cvCaptureFromCAM(0);
+ 	image = cvQueryFrame(capture);
+ 	if(!image)
+ 	{
+ 		puts("Image fail to load");
+ 	}
+
+ 	gray = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1);
+ 	cvCvtColor(image, gray, CV_RGB2GRAY);
+
+	cvReleaseImage(&image);
+	cvReleaseCapture(&capture);
+
+	 return gray;
+}
+
+IplImage* captureAll(int serialD){
+ 	IplImage *gray1 = 0, *gray2 = 0, *gray3 = 0, *result = 0;
+	char* bufferSerial = (char*)malloc(4 * sizeof(char));
+
+	turnServo(serialD, 85, bufferSerial);
+	gray2 = captureImage();
+	sleep(1);
+	cvSaveImage("../saveImages/cap2.jpg", gray2, 0);
+
+	turnServo(serialD, 0, bufferSerial);
+	gray1 = captureImage();
+	sleep(1);
+	cvSaveImage("../saveImages/cap1.jpg", gray1, 0);
+
+	turnServo(serialD, 175, bufferSerial);
+	gray3 = captureImage();
+	cvSaveImage("../saveImages/cap33.jpg", gray3, 0);
+	sleep(1);
+
+	turnServo(serialD, 85, bufferSerial);
+
+	//Concatenate all 3 image in result
+
+	 return result;
 }
 
 void sobel(int64_t *curve, int64_t *derived, int nbrColumn)

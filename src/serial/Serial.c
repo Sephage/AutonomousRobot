@@ -199,7 +199,9 @@ int turnServo(int fd, int angle, uint8_t *buffer){
 	return val;
 }
 
-int askAngle(int fd, uint8_t *bufferW, uint8_t *bufferR){
+int askAngle(int fd, uint8_t *bufferW){
+
+	uint8_t* bufferR = (uint8_t*)calloc(10,1);
 	int angle;
 	bufferW[0] = 'a';
 	bufferW[1] = 0;
