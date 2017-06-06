@@ -7,11 +7,11 @@ int open_s(){
 	struct termios toptions ;
 	int fd;
 	int i;
-	char name[10];
+	char name[20];
 
 	int success = 0;
 	for(i = 0; (i < 10) && (success < 1); i++){
-		char port[10];
+		char port[20];
 		sprintf(port, "/dev/ttyACM%d", i);
 		if((fd = open(port, O_RDWR | O_NONBLOCK))== -1){
 

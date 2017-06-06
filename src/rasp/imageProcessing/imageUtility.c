@@ -40,19 +40,22 @@ IplImage* captureAll(int serialD){
 	char* bufferSerial = (char*)malloc(4 * sizeof(char));
 
 	turnServo(serialD, 85, bufferSerial);
+	sleep(1);
 	gray2 = captureImage();
 	sleep(1);
 	cvSaveImage("../saveImages/cap2.jpg", gray2, 0);
 
 	turnServo(serialD, 0, bufferSerial);
+	sleep(1);
 	gray1 = captureImage();
 	sleep(1);
 	cvSaveImage("../saveImages/cap1.jpg", gray1, 0);
 
 	turnServo(serialD, 175, bufferSerial);
-	gray3 = captureImage();
-	cvSaveImage("../saveImages/cap33.jpg", gray3, 0);
 	sleep(1);
+	gray3 = captureImage();
+	sleep(1);
+	cvSaveImage("../saveImages/cap3.jpg", gray3, 0);
 
 	turnServo(serialD, 85, bufferSerial);
 
