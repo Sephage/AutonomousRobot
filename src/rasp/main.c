@@ -9,5 +9,5 @@
 
 int main(int* argv, char** argc)
 {
-	learnLocation();
+	//learnLocation();
 }

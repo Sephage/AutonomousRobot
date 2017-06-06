@@ -15,6 +15,18 @@
 #include <stdio.h>
 
 /*
+ *Capture an image with the camera and return it in gray
+ *
+ */
+IplImage* captureImage();
+
+/*
+ *Capture 3 image by turnig servo motor and return the Concatenated image
+ *
+ */
+IplImage* captureAll(int serialD);
+
+/*
  * take an image and fill the array with the sum of columns for each column in the image
  *
  * image : the captured image
@@ -51,7 +63,9 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);
  * placeNumber : the number of the place that the image belong
  * angle : the angle of the image
  */
-int saveImage(IplImage* imageToSave, int placeNumber, float angle);
+int saveImage(Place* place, int placeNumber);
+
+int saveImageData(Place* place, int placeNumber);
 
 /*
  * Compare two images the current and the learned and
