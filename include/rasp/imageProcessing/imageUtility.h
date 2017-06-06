@@ -65,8 +65,11 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);
  */
 int saveImage(Place* place, int placeNumber);
 
-int saveImageData(Place* place, int placeNumber);
+int savePlaceData(Place* place, int placeNumber);
 
+int saveImages(Place *places, int nbPlace);
+
+void loadPlaceData(Place *place, int nbPlace);
 /*
  * Compare two images the current and the learned and
  * return the number of similar pixels

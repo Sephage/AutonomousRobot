@@ -262,7 +262,7 @@ int saveImage(Place* place, int placeNumber)
     for(j=0 ; j<place->landmarksNbr ; j++){
         IplImage *imageToSave = place->landmarks[j].thumbnail;
         sprintf(name, "%d_%d.jpg", placeNumber,j);
-        printf("Creation du fichier\n");
+        printf("Creation du fichier %s\n", name);
         cvSaveImage(name, imageToSave, NULL);
         /*file = fopen(name, "w+");
 
@@ -275,35 +275,58 @@ int saveImage(Place* place, int placeNumber)
           fwrite(imageToSave->height, 5, 1, file);
           fwrite("\n",2,1, file);
 
-          fwrite(imageToSave->data, imageToSave->width*imageToSave->height*imageToSave->nChannels, 1, file);*/
+          fwrite(imageToSave->data, imageToSave->width*imageToSave->height*imageToSave->nChannels, 1, file);
 
-        fclose(file);
+        fclose(file);*/
     }
     return 0;
 }
 
-int saveImageData(Place* place, int placeNumber){
+int savePlaceData(Place* place, int placeNumber){
     char name[256];
     FILE* file;
 
     int j;
     const char* mVA = "movementVectorAngle ";
     const char* angle = "angle ";
+    sprintf(name, "%d.sav", placeNumber);
+    printf("Creation du fichier\n");
+    file = fopen(name, "w+");
 
+    fwrite(&(place->landmarksNbr), 5, 1, file);
+    fwrite(" ", 1, 1, file);
+    fwrite(&(place->movementVectorAngle), 6, 1, file);
+    fwrite(" ", 1, 1, file);
     for(j=0 ; j<place->landmarksNbr ; j++){
-        IplImage *imageToSave = place->landmarks[j].thumbnail;
-        sprintf(name, "%d_%d.sav", placeNumber,j);
-        printf("Creation du fichier\n");
-        file = fopen(name, "w+");
-
-        fwrite(mVA, 20, 1, file);
-        fwrite(&(place->movementVectorAngle), 6, 1, file);
-        fwrite("\n", 2, 1, file);
         fwrite(&(place->landmarks[j].angle), 6, 1, file);
-
-        fclose(file);
     }
+
+    fclose(file);
     return 0;
+}
+
+void loadPlaceData(Place* place, int placeNumber){
+    char name[256];
+    FILE* file;
+    int i;
+    char empty[1];
+
+    sprintf(name, "%d.sav", placeNumber);
+    printf("Lecture du fichier %s\n", name);
+    file = fopen(name, "r+");
+
+    fread(&(place->landmarksNbr), 5, 1, file);
+    fread(empty, 1, 1, file);
+    fread(&(place->movementVectorAngle), 6, 1, file);
+    fread(empty, 1, 1, file);
+    for(i=0 ; i<place->landmarksNbr ; i++){
+        fread(&(place->landmarks[i].angle), 6, 1, file);
+    }
+    printf("lN : %d\n", place->landmarksNbr);
+    printf("mvA : %f\n", place->movementVectorAngle);
+    for(i=0 ; i<place->landmarksNbr ; i++){
+        printf("LM %d = %f\n",i, place->landmarks[i].angle);
+    }
 }
 
 int saveImages(Place* places, int nbPlace){
