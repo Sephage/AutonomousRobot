@@ -65,9 +65,12 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);
  */
 int saveImage(Place* place, int placeNumber);
 
-int savePlaceData(Place* place, int placeNumber);
-
 int saveImages(Place *places, int nbPlace);
+
+
+void savePlacesData(Place* places, int numberPlaces);
+
+int savePlaceData(Place* place, int placeNumber);
 
 void loadPlaceData(Place *place, int nbPlace);
 /*
