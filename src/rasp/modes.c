@@ -1,23 +1,21 @@
 #include "../../include/rasp/modes.h"
 
-void learning(char* dirPath, Server server) {
-  IplImage image;
-  int angle;
+void learning(char* dirPath, int angle, int serialD) {
+  IplImage *image;
   int landmarksNbr;
 
-//  image = getPlace();
-  landmarksNbr = learnLocation(dirPath);
-  angle = receiveAngleFromClient(server);
-  savePlaceData(dirPath, angle, landmarksNbr);
+  image = captureAll();
+//  landmarksNbr = learnLocation(image, dirPath);
+//  savePlaceData(dirPath, angle, landmarksNbr);
 }
 
-void autonomous() {
+void autonomous(int serialD, Server server) {
 //  Place places[] = LoadPlaces();
-  IplImage image;
+  IplImage *image;
   int cont = 1, placeIndex, angle;
 
   while(cont) {
-    //image = getPlace();
+    image = captureAll();
     //imageTreatment(image);
 
     //placeIndex = recognition(image);
