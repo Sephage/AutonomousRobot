@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 /* default value/easy to change variables */
-#define IP_SERV "192.168.42.11" // IP of the server we want to connect to.
+#define IP_SERV "192.168.42.1" // IP of the server we want to connect to.
 #define PORT 9930 // Port the server is listening to, waiting for a client to connect.
 
 #define BUF_SIZE_SEND 4 // size of message to send to the server in order to connect the two.
@@ -27,5 +27,7 @@ typedef struct {
 
 void connexionToServer(Client *client);
 void sendToServer(Client client, char* message);
+void sendAngleToServer(Client client, int angle);
+void receiveFromServer(Client client);
 char* receiveDataFromServer(Client client);
 int deconnexionFromServer(Client *client);

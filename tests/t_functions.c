@@ -79,15 +79,17 @@ int testServer() {
 
   char *rmess1 = receiveFromClient(server);
   printf("Received msg 1 from client\n");
-//  sendEndMsgToClient(server, sendMsg);
-//  printf("Sent msg 1 from client");
+  sendEndMsgToClient(server, sendMsg);
+  printf("Sent msg 1 to client\n");
   char *rmess2 = receiveFromClient(server);
   printf("Received msg 2 from client\n");
   strcpy(sendMsg, "Rcd");
-//  sendEndMsgToClient(server, sendMsg);
-//  printf("Sent msg 1 from client");
+  sendEndMsgToClient(server, sendMsg);
+  printf("Sent msg 1 to client\n");
   char *rmess3 = receiveFromClient(server);
   printf("Received msg 3 from client\n");
+  sendEndMsgToClient(server, sendMsg);
+  printf("Sent msg 1 to client\n");
   if((strcmp(rmess1, "Lea") == 0) && (strcmp(rmess2, "Aut") == 0) && (strcmp(rmess3, "Stp") == 0)) {
     printf("sendEndMsg and receiveFromClient = OK.\n");
   }

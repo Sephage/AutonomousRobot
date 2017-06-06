@@ -33,4 +33,6 @@ void sendDataToClient(Server server, char* data);
 
 char* receiveFromClient(Server server);
 
+int* receiveAngleFromClient(Server server);
+
 int closeServer(Server *server);

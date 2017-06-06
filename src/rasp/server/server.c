@@ -62,6 +62,14 @@ char* receiveFromClient(Server server) {
 	return message;
 }
 
+int* receiveAngleFromClient(Server server) {
+	int *angle = (int *)malloc(sizeof(int));
+
+	recv(server.sckt, angle, 1, 0);
+
+	return angle;
+}
+
 int closeServer(Server *server) {
 	int ret = 0;
 
