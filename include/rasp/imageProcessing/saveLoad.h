@@ -1,3 +1,4 @@
+#include "imageStructs.h"
 /*
  * Take an image and save the image in the right place,
  * Put the right information into the saving configuration file.
