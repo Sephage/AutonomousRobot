@@ -395,12 +395,9 @@ int diffComparison(IplImage* current, IplImage* learned){
 	return diff;
 }
 
-int learnLocation()
-{
+int learnLocation(IplImage* gray) {
 	IplImage *thumbnail = 0;
 	Interest *extremums;
-	IplImage *image = 0;
-	IplImage *gray = 0;
 	CvCapture *capture;
 	int64_t *sumColumn;
 	int64_t *smoothed;
@@ -414,32 +411,21 @@ int learnLocation()
 
 	nbrLandmarks = 0;
 
-	capture = cvCaptureFromCAM(0);
-	image = cvQueryFrame(capture);
-	if(!image)
-	{
-		puts("Image fail to load");
-		exit(1);
-	}
-
-	gray = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1);
-	cvCvtColor(image, gray, CV_RGB2GRAY);
-
-	sumColumn = malloc(image->width * sizeof(int64_t));
-	smoothed = malloc(image->width * sizeof(int64_t));
-	derived = malloc(image->width * sizeof(int64_t));
+	sumColumn = malloc(gray->width * sizeof(int64_t));
+	smoothed = malloc(gray->width * sizeof(int64_t));
+	derived = malloc(gray->width * sizeof(int64_t));
 
 
 
 	getSumColumnValues(gray, sumColumn);
-	lowFiltering(sumColumn, smoothed, image->width, SMOOTHNESS);
-	sobel(smoothed, derived, image->width);
-	extremums = extremumExtract(sumColumn, derived, &nbrElt, image->width, SLOPE);
+	lowFiltering(sumColumn, smoothed, gray->width, SMOOTHNESS);
+	sobel(smoothed, derived, gray->width);
+	extremums = extremumExtract(sumColumn, derived, &nbrElt, gray->width, SLOPE);
 	qsort((void *) extremums, nbrElt, sizeof(Interest), compare);
 
 	#ifdef __DEBUG
 	IplImage *graph = 0;
-	graph = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 1);
+	graph = cvCreateImage(cvSize(gray->width, gray->height), IPL_DEPTH_8U, 1);
 	printGraphOnImage(graph, smoothed);
 	cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
 	cvReleaseImage(&graph);
@@ -459,11 +445,8 @@ int learnLocation()
 		nbrLandmarks++;
 	}
 
-	cvSaveImage("../saveImages/image.jpg", image, 0);
+	cvSaveImage("../saveImages/image.jpg", gray, 0);
 
-
-
-	cvReleaseImage(&image);
 	cvReleaseImage(&gray);
 	free(sumColumn);
 	free(smoothed);

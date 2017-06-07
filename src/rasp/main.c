@@ -40,8 +40,8 @@ int main(int* argv, char** argc) {
 		autonomous(serialD, server);
 		sendEndMsgToClient(server, "End");
 	}*/
-
-	learnLocation();
+	IplImage* image = captureAll(serialD);
+	learnLocation(image);
 
 	free(dirpath);
 	close_s(serialD);
