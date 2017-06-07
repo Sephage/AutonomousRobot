@@ -13,7 +13,7 @@ add_executable (datas src/rasp/main.c src/rasp/imageProcessing/imageUtility.c sr
 
 
 #Creation of executable for serial test
-add_executable (serial tests/serialTest.c src/serial/Serial.c src/rasp/imageProcessing/imageUtility.c)
+add_executable (serial tests/serialTest.c src/serial/Serial.c src/rasp/imageProcessing/imageUtility.c src/rasp/imageProcessing/saveLoad.h)
 
 # Linking with opencv and math.h
 target_link_libraries (datas ${OpenCV_LIBS} m)
