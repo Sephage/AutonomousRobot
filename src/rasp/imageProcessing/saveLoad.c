@@ -11,6 +11,9 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <cv.h>
+#include <highgui.h>
+
 const char* C_SAVE_DIR = "../saveImages";
 
 int saveImages(Place* places, int nbPlace){
