@@ -14,6 +14,29 @@
 
 #define __DEBUG
 
+IplImage* concatenateImage(IplImage* image1, IplImage* image2, IplImage* image3) {
+
+	int i, j, k;
+	IplImage* result = cvCreateImage(cvSize(image1->width*3, image1->height), IPL_DEPTH_8U, 1);
+	int width = image1->width;
+	int height = image1->height;
+	int nChannels = image1->nChannels;
+	int step = image1->widthStep;
+	int bigstep = result->widthStep;
+
+	for(i = 0; i < height; i++) {
+		for(j = 0; j < width; j++) {
+			for(k = 0; k < nChannels; k++) {
+				result->imageData[i*bigstep + j*nChannels + k] = image1->imageData[i*step + j*nChannels + k];
+				result->imageData[i*bigstep + (j+width)*nChannels + k] = image2->imageData[i*step + j*nChannels + k];
+				result->imageData[i*bigstep + (j+(width*2))*nChannels + k] = image3->imageData[i*step + j*nChannels + k];
+			}
+		}
+	}
+
+	return result;
+}
+
 IplImage* captureImage(){
 	IplImage *image = 0;
  	IplImage *gray = 0;
@@ -60,6 +83,8 @@ IplImage* captureAll(int serialD){
 	turnServo(serialD, 85, bufferSerial);
 
 	//Concatenate all 3 image in result
+	result = concatenateImage(gray1, gray2, gray3);
+	cvSaveImage("../saveImages/conca.jpg", result, 0);
 
 	 return result;
 }

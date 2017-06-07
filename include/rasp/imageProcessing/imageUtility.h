@@ -14,6 +14,13 @@
 #include <highgui.h>
 #include <stdio.h>
 
+
+/*
+ *Concatenate images in one.
+ *
+ */
+IplImage* concatenateImage(IplImage* image1, IplImage* image2, IplImage* image3);
+
 /*
  *Capture an image with the camera and return it in gray
  *
