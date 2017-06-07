@@ -63,16 +63,6 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);
 
 
 /*
- * Take an image and save the image in the right place,
- * Put the right information into the saving configuration file.
- *
- * imageToSave : image which will be save
- * placeNumber : the number of the place that the image belong
- * angle : the angle of the image
- */
-int saveImage(IplImage* imageToSave, int placeNumber, float angle);
-
-/*
  * Compare two images the current and the learned and
  * return the number of similar pixels
  */
