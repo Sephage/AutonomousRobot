@@ -370,7 +370,7 @@ int diffComparison(IplImage* current, IplImage* learned){
     return diff;
 }
 
-int learnLocation(IplImage* gray, int serialD, int deplAngle) {
+Place* learnLocation(IplImage* gray, int serialD, int deplAngle) {
     Place *place = (Place *)malloc(sizeof(Place));
     IplImage *thumbnail = 0;
     Interest *extremums;
@@ -408,29 +408,28 @@ int learnLocation(IplImage* gray, int serialD, int deplAngle) {
 
 
     mkdir("../saveImages/thumbnails", 0777);
-    for(i  = 0; i < NB_LANDMARKS_MAX && i < nbrElt; i++)
-    {
+    for(i  = 0; i < NB_LANDMARKS_MAX && i < nbrElt; i++) {
         sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
 
         thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
         fAngle = (((float)extremums[i].index / gray->width)*IMAGE_VISION_ANGLE) - (IMAGE_VISION_ANGLE/2);
         place->landmarks[i].thumbnail = thumbnail;
         place->landmarks[i].angle = rAngle + fAngle;
-        cvSaveImage(path, thumbnail, 0);
-        cvReleaseImage(&thumbnail);
+//        cvSaveImage(path, thumbnail, 0);
+//        cvReleaseImage(&thumbnail);
 
         nbrLandmarks++;
     }
     place->landmarksNbr = nbrLandmarks;
+    place->movementVectorAngle = deplAngle;
 
     cvSaveImage("../saveImages/image.jpg", gray, 0);
 
     cvReleaseImage(&gray);
     free(bufferW);
-    free(place);
     free(sumColumn);
     free(smoothed);
     free(derived);
 
-    return nbrLandmarks;
+    return place;
 }
