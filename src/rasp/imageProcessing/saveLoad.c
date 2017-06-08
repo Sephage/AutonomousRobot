@@ -18,15 +18,9 @@ const char* C_SAVE_DIR = "../saveImages";
 
 int saveImages(Place* places, int nbPlace){
     int i;
-    char oldDir[1024];
-    if(getcwd(oldDir, sizeof(oldDir)) == NULL) printf("getcwd has problem in saveImage");
-
-    chdir(C_SAVE_DIR);
     for(i=0; i<nbPlace; i++){
         saveImage(&places[i], i);
     }
-
-    chdir(oldDir);
     return 0;
 }
 
@@ -38,27 +32,28 @@ int saveImage(Place* place, int placeNumber)
     int j;
     const char* mVA = "movementVectorAngle ";
     const char* angle = "angle ";
+    char oldDir[1024];
 
+    if(getcwd(oldDir, sizeof(oldDir)) == NULL) printf("getcwd has problem in saveImage");
+
+    chdir(C_SAVE_DIR);
     for(j=0 ; j<place->landmarksNbr ; j++){
         IplImage *imageToSave = place->landmarks[j].thumbnail;
         sprintf(name, "%d_%d.jpg", placeNumber,j);
         printf("Creation du fichier %s\n", name);
         cvSaveImage(name, imageToSave, NULL);
     }
+
+    chdir(oldDir);
     return 0;
 }
 
 void savePlacesData(Place* places, int numberPlaces){
     int i;
-    char oldDir[1024];
-
-    if(getcwd(oldDir, sizeof(oldDir)) == NULL) printf("getcwd has problem in savePlaceData");
-    chdir(C_SAVE_DIR);
 
     for(i=0 ; i<numberPlaces ; i++){
         savePlaceData(&(places[i]), i);
     }
-    chdir(oldDir);
 }
 
 int savePlaceData(Place* place, int placeNumber){
@@ -66,8 +61,12 @@ int savePlaceData(Place* place, int placeNumber){
     FILE* file;
 
     int j;
-    const char* mVA = "movementVectorAngle ";
-    const char* angle = "angle ";
+
+    char oldDir[1024];
+
+    if(getcwd(oldDir, sizeof(oldDir)) == NULL) printf("getcwd has problem in savePlaceData");
+    chdir(C_SAVE_DIR);
+
     sprintf(name, "%d.sav", placeNumber);
     printf("Creation du fichier\n");
     file = fopen(name, "w+");
@@ -79,8 +78,9 @@ int savePlaceData(Place* place, int placeNumber){
     for(j=0 ; j<place->landmarksNbr ; j++){
         fwrite(&(place->landmarks[j].angle), 6, 1, file);
     }
-
     fclose(file);
+
+    chdir(oldDir);
     return 0;
 }
 
