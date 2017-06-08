@@ -12,12 +12,15 @@ int saveImages(Place *places, int nbPlace);
 
 void saveNbPlace(int nbPlace);
 
-
 void savePlacesData(Place* places, int numberPlaces);
 
 int savePlaceData(Place* place, int placeNumber);
 
-void loadPlaceData(Place *place, int nbPlace);
+void loadPlacesData(Place* places, int numberPlaces);
+
+void loadPlaceData(Place *place, int placeNumber);
 
 void loadImages(Place *places, int numberPlaces);
+
+int loadNbPlace(); 
 

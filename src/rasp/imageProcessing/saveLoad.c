@@ -98,6 +98,16 @@ void saveNbPlace(int nbPlace){
     chdir(oldDir);
 }
 
+void loadPlacesData(Place* places, int numberPlaces){
+    char name[256];
+    FILE* file;
+    int i;
+
+    for(i=0 ; i<numberPlaces ; i++){
+        loadPlaceData(&(places[i], i);
+    }
+}
+
 void loadPlaceData(Place* place, int placeNumber){
     char name[256];
     FILE* file;
@@ -143,4 +153,15 @@ void loadImages(Place* places, int numberPlaces){
         }
     }
     chdir(oldDir);
+}
+
+int loadNbPlace(){
+   int nbPlaces; 
+   FILE* file;
+
+   file = fopen("../saveImages/PlaceNb.sav");
+   if(fread(&nbPlaces, 5, 1, file) == 0) puts("ERROR reading nbplaces\n");
+   fclose(file);
+
+   return nbPlaces;
 }
