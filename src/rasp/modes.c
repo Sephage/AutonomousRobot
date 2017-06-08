@@ -1,11 +1,10 @@
 #include "../../include/rasp/modes.h"
 
-void learning(char* dirPath, int angle, int serialD) {
+void learning(char* dirPath, int deplAngle, int serialD) {
   IplImage *image;
-  int landmarksNbr;
 
-  image = captureAll();
-//  landmarksNbr = learnLocation(image, dirPath);
+  image = captureAll(serialD);
+//  learnLocation(image, serialD, deplAngle);
 //  savePlaceData(dirPath, angle, landmarksNbr);
 }
 

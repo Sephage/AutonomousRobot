@@ -1,5 +1,6 @@
 #include "../../../include/rasp/imageProcessing/imageUtility.h"
 #include "../../../include/rasp/imageProcessing/imageStructs.h"
+#include "../../../include/rasp/imageProcessing/saveLoad.h"
 #include "../../../include/serial/Serial.h"
 
 #include <stdio.h>
@@ -369,27 +370,26 @@ int diffComparison(IplImage* current, IplImage* learned){
     return diff;
 }
 
-int learnLocation(IplImage* gray) {
+int learnLocation(IplImage* gray, int serialD, int deplAngle) {
+    Place *place = (Place *)malloc(sizeof(Place));
     IplImage *thumbnail = 0;
     Interest *extremums;
     CvCapture *capture;
     int64_t *sumColumn;
     int64_t *smoothed;
     int64_t *derived;
-    int nbrLandmarks;
+    uint8_t *bufferW = (uint8_t *)malloc(4*sizeof(char));
+    int nbrLandmarks, nbrElt, rAngle;
+    float fAngle;
     char path[100];
-    int nbrElt;
     int i;
 
-
-
     nbrLandmarks = 0;
+    rAngle = askAngle(serialD, bufferW);
 
     sumColumn = malloc(gray->width * sizeof(int64_t));
     smoothed = malloc(gray->width * sizeof(int64_t));
     derived = malloc(gray->width * sizeof(int64_t));
-
-
 
     getSumColumnValues(gray, sumColumn);
     lowFiltering(sumColumn, smoothed, gray->width, SMOOTHNESS);
@@ -413,15 +413,21 @@ int learnLocation(IplImage* gray) {
         sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
 
         thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
+        fAngle = (((float)extremums[i].index / gray->width)*IMAGE_VISION_ANGLE) - (IMAGE_VISION_ANGLE/2);
+        place->landmarks[i].thumbnail = thumbnail;
+        place->landmarks[i].angle = rAngle + fAngle;
         cvSaveImage(path, thumbnail, 0);
         cvReleaseImage(&thumbnail);
 
         nbrLandmarks++;
     }
+    place->landmarksNbr = nbrLandmarks;
 
     cvSaveImage("../saveImages/image.jpg", gray, 0);
 
     cvReleaseImage(&gray);
+    free(bufferW);
+    free(place);
     free(sumColumn);
     free(smoothed);
     free(derived);

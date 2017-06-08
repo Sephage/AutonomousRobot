@@ -5,7 +5,7 @@
 #ifndef MODES_H
 #define MODES_H
 
-void learning(char* dirPath, int angle, int serialD);
+void learning(char* dirPath, int deplAngle, int serialD);
 void autonomous(int serialD, Server server);
 
 #endif

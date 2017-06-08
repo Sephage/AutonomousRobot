@@ -14,7 +14,7 @@ int main(int* argv, char** argc) {
 	int serialD = open_s();
 	char* dirpath = (char *)malloc(50*sizeof(char));
 	Server server;
-	int angle;
+	int deplAngle;
 	int i = 0;
 
 //	initialiseServer(&server);
@@ -28,7 +28,7 @@ int main(int* argv, char** argc) {
 
     angle = receiveAngleFromClient(server);
 		sendEndMsgToClient(server, "Rcd");
-		learning(dirpath, angle, serialD);
+		learning(dirpath, deplAngle, serialD);
 		sendEndMsgToClient(server, "End");
 		i++;
   }*/
@@ -41,7 +41,7 @@ int main(int* argv, char** argc) {
 		sendEndMsgToClient(server, "End");
 	}*/
 	IplImage* image = captureAll(serialD);
-	learnLocation(image);
+	learnLocation(image, serialD, 90);
 
 	free(dirpath);
 	close_s(serialD);
