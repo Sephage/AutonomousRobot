@@ -1,0 +1,3 @@
+/home/remy/git/AutonomousRobot/CMakeFiles/comparison.dir
+/home/remy/git/AutonomousRobot/CMakeFiles/datas.dir
+/home/remy/git/AutonomousRobot/CMakeFiles/serial.dir
