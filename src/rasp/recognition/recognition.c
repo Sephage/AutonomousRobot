@@ -68,7 +68,7 @@ float computeActivities(Place *place, Place *current)
 	}
 
 	#ifdef __DEBUG
-	printf("L'activité totale est de %lf\n", activity);
+	printf("L'activité totale est de %lf\n\n", activity);
 	#endif
 
 	return activity;
