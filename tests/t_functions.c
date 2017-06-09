@@ -71,22 +71,25 @@ int testServer() {
   char sendMsg[] = "End";
   int returnCode = initialiseServer(&server);
   int closeValue;
+  char *rmess1 = (char *)malloc(BUF_SIZE_RCV*sizeof(char));
+  char *rmess2 = (char *)malloc(BUF_SIZE_RCV*sizeof(char));
+  char *rmess3 = (char *)malloc(BUF_SIZE_RCV*sizeof(char));
 
   if(returnCode != 0) {
     printf("initialiseServer = NOTOK, return Code is %d, should be 0.\n", returnCode);
     return -1;
   }
 
-  char *rmess1 = receiveFromClient(server);
+   receiveFromClient(server, rmess1);
   printf("Received msg 1 from client\n");
   sendEndMsgToClient(server, sendMsg);
   printf("Sent msg 1 to client\n");
-  char *rmess2 = receiveFromClient(server);
+  receiveFromClient(server, rmess2);
   printf("Received msg 2 from client\n");
   strcpy(sendMsg, "Rcd");
   sendEndMsgToClient(server, sendMsg);
   printf("Sent msg 1 to client\n");
-  char *rmess3 = receiveFromClient(server);
+  receiveFromClient(server, rmess3);
   printf("Received msg 3 from client\n");
   sendEndMsgToClient(server, sendMsg);
   printf("Sent msg 1 to client\n");

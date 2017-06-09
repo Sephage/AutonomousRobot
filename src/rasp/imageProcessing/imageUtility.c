@@ -210,7 +210,7 @@ IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
 	#endif
 
     if(widthPos < 32 || widthPos >= image->width-32)
-    {	
+    {
         fputs("This position is not permitted in compressedThumbnail\n",stderr);
         return NULL;
     }
@@ -403,8 +403,7 @@ int diffComparison(IplImage* current, IplImage* learned){
     return diff;
 }
 
-Place* learnLocation(int serialD, int deplAngle) {
-    Place *place = (Place *)malloc(sizeof(Place));
+void learnLocation(int serialD, Place *place) {
     IplImage *thumbnail = 0;
     IplImage *gray = 0;
     Interest *extremums;
@@ -455,7 +454,7 @@ Place* learnLocation(int serialD, int deplAngle) {
         nbrLandmarks++;
     }
     place->landmarksNbr = nbrLandmarks;
-    place->movementVectorAngle = deplAngle;
+    place->movementVectorAngle = rAngle;
 
     cvSaveImage("../saveImages/image.jpg", gray, 0);
 
@@ -464,7 +463,6 @@ Place* learnLocation(int serialD, int deplAngle) {
     free(sumColumn);
     free(smoothed);
     free(derived);
-	free(extremums);
+    free(extremums);
 
-    return place;
 }

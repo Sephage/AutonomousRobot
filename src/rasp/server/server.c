@@ -49,17 +49,15 @@ void sendDataToClient(Server server, char* data) {
 	send(server.sckt, data, BUF_SIZE_DATA, 0);
 }
 
-char* receiveFromClient(Server server) {
-	char *message =  (char *)malloc(BUF_SIZE_RCV*sizeof(char));
+void receiveFromClient(Server server, char* msg) {
 
 	do {
-		if (recv(server.sckt, message, BUF_SIZE_RCV, 0) == -1) {
+		if (recv(server.sckt, msg, BUF_SIZE_RCV, 0) == -1) {
 			fprintf(stderr, "recvfrom() error.\n");
 			close(server.sckt);
 		}
-	}while((strcmp(message, "Lea") != 0) && (strcmp(message, "Aut") != 0) && (strcmp(message, "Stp") != 0) );
+	}while((strcmp(msg, "Lea") != 0) && (strcmp(msg, "Aut") != 0) && (strcmp(msg, "Stp") != 0) );
 
-	return message;
 }
 
 int* receiveAngleFromClient(Server server) {

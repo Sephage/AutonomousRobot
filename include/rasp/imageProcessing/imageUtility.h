@@ -78,7 +78,7 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
 
 static int compare (void const *a, void const *b);
 
-Place* learnLocation(int serialD, int deplAngle);
+void learnLocation(int serialD, Place *place);
 
 IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos);
 

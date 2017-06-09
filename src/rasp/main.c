@@ -13,6 +13,7 @@
 
 int main(int* argv, char** argc) {
 	int serialD = open_s();
+	char *msg = (char *)malloc(BUF_SIZE_RCV*sizeof(char));
 	Place *place;
 	Server server;
 	char *cont =  (char *)malloc(sizeof(char));
@@ -21,7 +22,8 @@ int main(int* argv, char** argc) {
 //	initialiseServer(&server);
 
 	/* Leaning mode */
-/*  while(strcmp(receiveFromClient(server), "Lea") == 0) {
+/*  while(loop) {
+		strcmp(receiveFromClient(server, msg), "Lea")
 		sendEndMsgToClient(server, "Rcd");
 
 		place = learnLocation(serialD, 15);
@@ -32,7 +34,8 @@ int main(int* argv, char** argc) {
   }*/
 
 	while(loop) {
-		place = learnLocation(serialD, 15);
+		place = (Place *)malloc(sizeof(Place));
+		learnLocation(serialD, place);
 		savePlaceData(place, i);
 		saveImage(place, i);
 		i++;
@@ -43,7 +46,6 @@ int main(int* argv, char** argc) {
 		}
 		for(j = 0; j < place->landmarksNbr; j++){
 			free(place->landmarks[j].thumbnail);
-			//free(&place->landmarks[j]);
 		}
 		free(place);
 	}
@@ -59,6 +61,7 @@ int main(int* argv, char** argc) {
 	saveImage(place, 0);*/
 
 	free(cont);
+	free(msg);
 	close_s(serialD);
 //	closeServer(&server);
 

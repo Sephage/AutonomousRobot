@@ -34,7 +34,7 @@ void sendEndMsgToClient(Server server, char* msg);
 */
 void sendDataToClient(Server server, char* data);
 
-char* receiveFromClient(Server server);
+void receiveFromClient(Server server, char* msg);
 
 int* receiveAngleFromClient(Server server);
 
