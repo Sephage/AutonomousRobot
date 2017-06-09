@@ -15,10 +15,10 @@ add_executable (datas src/rasp/main.c src/rasp/imageProcessing/imageUtility.c sr
 add_executable (client src/controllerComputer/main.c src/controllerComputer/client.c)
 
 
-#Creation of executable for serial test
+#Creation of executable for test
 add_executable (serial tests/serialTest.c src/serial/Serial.c src/rasp/imageProcessing/imageUtility.c src/rasp/imageProcessing/saveLoad.c)
-
 add_executable (comparison tests/comparison.c src/rasp/recognition/recognition.c src/rasp/imageProcessing/imageUtility.c src/serial/Serial.c)
+add_executable (compass tests/compass_test.c src/serial/Serial.c)
 
 # Linking with opencv and math.h
 target_link_libraries (datas ${OpenCV_LIBS} m)
