@@ -87,6 +87,10 @@ IplImage* captureAll(int serialD){
     result = concatenateImage(gray1, gray2, gray3);
     cvSaveImage("../saveImages/conca.jpg", result, 0);
 
+	cvReleaseImage(&gray1);
+	cvReleaseImage(&gray2);
+	cvReleaseImage(&gray3);
+
     return result;
 }
 
@@ -193,8 +197,16 @@ static int compare (void const *a, void const *b)
 IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
 {
     int i, j;
+	int k, l;
     IplImage *thumbnail = 0;
     int thumbnailPos, imagePos;
+
+	#ifdef __DEBUG
+	IplImage *color = 0;
+
+	color = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 3);
+    cvCvtColor(image, color, CV_GRAY2RGB);
+	#endif
 
     if(widthPos < 32 || widthPos >= image->width-32)
     {
@@ -216,6 +228,16 @@ IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
             thumbnailPos = i * thumbnail->widthStep + j;
             imagePos = (4 * i + heightPos - 64) * image->widthStep + (2 * j + widthPos - 32);
             thumbnail->imageData[thumbnailPos]=image->imageData[imagePos];
+
+			#ifdef __DEBUG
+			for(k = heightPos - 64; k < heightPos + 64; k++)
+			{
+				for(l = widthPos - 32; l < widthPos +32; l++)
+				{
+					
+				}
+			}
+			#endif
         }
     }
 
