@@ -92,12 +92,12 @@ void receiveFromServer(Client client) {
 	free(msg);
 }
 
-char* receiveDataFromServer(Client client) {
+void receiveDataFromServer(Client client) {
 	char * data = (char *)malloc(BUF_SIZE_DATA*sizeof(char));
 	recv(client.clientSocket, data, BUF_SIZE_DATA, 0);
 
 
-	return data;
+	free(data);
 }
 
 int deconnexionFromServer(Client *client) {

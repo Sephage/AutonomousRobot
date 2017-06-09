@@ -33,6 +33,7 @@ int main () {
     receiveFromServer(client);
   }
 
+  free(cont);
   deconnexionFromServer(&client);
 
   return 0;

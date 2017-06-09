@@ -38,10 +38,9 @@ int saveImage(Place* place, int placeNumber)
 
     chdir(C_SAVE_DIR);
     for(j=0 ; j<place->landmarksNbr ; j++){
-        IplImage *imageToSave = place->landmarks[j].thumbnail;
         sprintf(name, "%d_%d.jpg", placeNumber,j);
         printf("Creation du fichier %s\n", name);
-        cvSaveImage(name, imageToSave, NULL);
+        cvSaveImage(name, place->landmarks[j].thumbnail, NULL);
     }
 
     chdir(oldDir);
@@ -156,7 +155,7 @@ void loadImages(Place* places, int numberPlaces){
 }
 
 int loadNbPlace(){
-   int nbPlaces; 
+   int nbPlaces;
    FILE* file;
 
    file = fopen("../saveImages/PlaceNb.sav","r");
