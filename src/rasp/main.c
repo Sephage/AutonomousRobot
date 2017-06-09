@@ -14,7 +14,7 @@
 int main(int* argv, char** argc) {
 	int serialD = open_s();
 	char *msg = (char *)malloc(BUF_SIZE_RCV*sizeof(char));
-	Place *place;
+	Place *place = (Place *)malloc(sizeof(Place));;
 	Server server;
 	char *cont =  (char *)malloc(sizeof(char));
 	int i = 0, loop =1, j = 0;
@@ -34,7 +34,6 @@ int main(int* argv, char** argc) {
   }*/
 
 	while(loop) {
-		place = (Place *)malloc(sizeof(Place));
 		learnLocation(serialD, place);
 		savePlaceData(place, i);
 		saveImage(place, i);
@@ -45,9 +44,10 @@ int main(int* argv, char** argc) {
 			loop = 0;
 		}
 		for(j = 0; j < place->landmarksNbr; j++){
-			free(place->landmarks[j].thumbnail);
+			if(place->landmarks[j].thumbnail != NULL) {
+				cvReleaseImage(&place->landmarks[j].thumbnail);
+			}
 		}
-		free(place);
 	}
 
 
@@ -62,6 +62,7 @@ int main(int* argv, char** argc) {
 
 	free(cont);
 	free(msg);
+	free(place);
 	close_s(serialD);
 //	closeServer(&server);
 

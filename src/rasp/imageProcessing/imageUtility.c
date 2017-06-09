@@ -432,13 +432,9 @@ void learnLocation(int serialD, Place *place) {
 
 	#ifdef __DEBUG
     IplImage *graph = 0;
-	IplImage *graphOnImage = 0;
     graph = cvCreateImage(cvSize(gray->width, gray->height), IPL_DEPTH_8U, 1);
-	graphOnImage = cvLoadImage("../saveImages/contour.jpg", CV_LOAD_IMAGE_COLOR);
-	printGraphOnImage(graphOnImage, smoothed);
     printGraphOnImage(graph, smoothed);
     cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
-    cvSaveImage("../saveImages/graphOnImage.jpg", graphOnImage, 0);
     cvReleaseImage(&graph);
 	#endif
 
@@ -460,6 +456,14 @@ void learnLocation(int serialD, Place *place) {
     place->landmarksNbr = nbrLandmarks;
     place->movementVectorAngle = rAngle;
 
+    #ifdef __DEBUG
+  	  IplImage *graphOnImage = 0;
+  	  graphOnImage = cvLoadImage("../saveImages/contour.jpg", CV_LOAD_IMAGE_COLOR);
+  	  printGraphOnImage(graphOnImage, smoothed);
+      cvSaveImage("../saveImages/graphOnImage.jpg", graphOnImage, 0);
+      cvReleaseImage(&graphOnImage);
+  	#endif
+
     cvSaveImage("../saveImages/image.jpg", gray, 0);
 
     cvReleaseImage(&gray);
@@ -468,5 +472,4 @@ void learnLocation(int serialD, Place *place) {
     free(smoothed);
     free(derived);
     free(extremums);
-
 }
