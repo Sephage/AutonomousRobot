@@ -370,9 +370,10 @@ int diffComparison(IplImage* current, IplImage* learned){
     return diff;
 }
 
-Place* learnLocation(IplImage* gray, int serialD, int deplAngle) {
+Place* learnLocation(int serialD, int deplAngle) {
     Place *place = (Place *)malloc(sizeof(Place));
     IplImage *thumbnail = 0;
+    IplImage *gray = 0;
     Interest *extremums;
     CvCapture *capture;
     int64_t *sumColumn;
@@ -386,6 +387,7 @@ Place* learnLocation(IplImage* gray, int serialD, int deplAngle) {
 
     nbrLandmarks = 0;
     rAngle = askAngle(serialD, bufferW);
+    gray = captureAll(serialD);
 
     sumColumn = malloc(gray->width * sizeof(int64_t));
     smoothed = malloc(gray->width * sizeof(int64_t));

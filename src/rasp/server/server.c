@@ -75,6 +75,7 @@ int closeServer(Server *server) {
 
 	ret = close(server->sckt);
 	ret = ret + close(server->osckt);
+	printf("Server closed.\n");
 
 	return ret;
 }

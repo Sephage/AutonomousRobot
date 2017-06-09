@@ -1,11 +1,11 @@
-#include "client.h"
-
+#include "../../include/controllerComputer/client.h"
 int main () {
+
 
   Client client;
   int loop = 1;
   int angle = 0;
-  char cont;
+  char *cont =  (char *)malloc(sizeof(char));
   char msg[] = "Lea\0";
   char *data;
 
@@ -14,13 +14,10 @@ int main () {
   /* Leaning mode */
   while(loop) {
     sendToServer(client, msg);
-    printf("Please notify the angle to turn in order to go towards the goal :\n");
-    scanf("%d", angle);
-    sendAngleToServer(client, angle);
     receiveFromServer(client);
     printf("Continue learning? (Y/n)\n");
     scanf("%c", cont);
-    if(strcmp(cont, "n") == 0 || strcmp(cont, "N") == 0) {
+    if(strcmp((const char *)cont, "n") == 0 || strcmp((const char *)cont, "N") == 0) {
       loop = 0;
       sendToServer(client, "Stp");
     }
