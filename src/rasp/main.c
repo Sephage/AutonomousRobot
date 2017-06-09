@@ -14,25 +14,39 @@
 int main(int* argv, char** argc) {
 	int serialD = open_s();
 	Place *place;
-	char* dirpath = (char *)malloc(50*sizeof(char));
 	Server server;
-	int i = 0;
+	char *cont =  (char *)malloc(sizeof(char));
+	int i = 0, loop =1, j = 0;
 
-	initialiseServer(&server);
+//	initialiseServer(&server);
 
 	/* Leaning mode */
-  while(strcmp(receiveFromClient(server), "Lea") == 0) {
+/*  while(strcmp(receiveFromClient(server), "Lea") == 0) {
 		sendEndMsgToClient(server, "Rcd");
-
-	//	sprintf(dirpath, "saveImages/Place%.3d", i);
-	//	mkdir(dirpath, 0777);
 
 		place = learnLocation(serialD, 15);
 		savePlaceData(place, i);
 		saveImage(place, i);
 		sendEndMsgToClient(server, "End");
 		i++;
-  }
+  }*/
+
+	while(loop) {
+		place = learnLocation(serialD, 15);
+		savePlaceData(place, i);
+		saveImage(place, i);
+		i++;
+		printf("Continue learning? (Y/n)\n");
+		scanf("%c", cont);
+		if(strcmp((const char *)cont, "n") == 0 || strcmp((const char *)cont, "N") == 0) {
+			loop = 0;
+		}
+		for(j = 0; j < place->landmarksNbr; j++){
+			free(place->landmarks[j].thumbnail);
+			//free(&place->landmarks[j]);
+		}
+		free(place);
+	}
 
 
 	/* Autonomous Mode */
@@ -44,10 +58,9 @@ int main(int* argv, char** argc) {
 /*	savePlaceData(place, 0);
 	saveImage(place, 0);*/
 
-	free(place);
-	free(dirpath);
+	free(cont);
 	close_s(serialD);
-	closeServer(&server);
+//	closeServer(&server);
 
 	return 0;
 }

@@ -29,5 +29,5 @@ void connexionToServer(Client *client);
 void sendToServer(Client client, char* message);
 void sendAngleToServer(Client client, int angle);
 void receiveFromServer(Client client);
-char* receiveDataFromServer(Client client);
+void receiveDataFromServer(Client client);
 int deconnexionFromServer(Client *client);

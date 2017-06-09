@@ -214,5 +214,7 @@ int askAngle(int fd, uint8_t *bufferW){
 
 	angle = atof(bufferR);
 
+	free(bufferR);
+
 	return angle;
 }
