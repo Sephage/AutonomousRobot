@@ -430,13 +430,17 @@ void learnLocation(int serialD, Place *place) {
     extremums = extremumExtract(sumColumn, derived, &nbrElt, gray->width, SLOPE);
     qsort((void *) extremums, nbrElt, sizeof(Interest), compare);
 
-#ifdef __DEBUG
+	#ifdef __DEBUG
     IplImage *graph = 0;
+	IplImage *graphOnImage = 0;
     graph = cvCreateImage(cvSize(gray->width, gray->height), IPL_DEPTH_8U, 1);
+	graphOnImage = cvLoadImage("../saveImages/contour.jpg", CV_LOAD_IMAGE_COLOR);
+	printGraphOnImage(graphOnImage, smoothed);
     printGraphOnImage(graph, smoothed);
     cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
+    cvSaveImage("../saveImages/graphOnImage.jpg", graphOnImage, 0);
     cvReleaseImage(&graph);
-#endif
+	#endif
 
 
 
