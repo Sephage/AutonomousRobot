@@ -90,6 +90,7 @@ IplImage* captureAll(int serialD){
 	cvReleaseImage(&gray1);
 	cvReleaseImage(&gray2);
 	cvReleaseImage(&gray3);
+	free(bufferSerial);
 
     return result;
 }
@@ -209,7 +210,7 @@ IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
 	#endif
 
     if(widthPos < 32 || widthPos >= image->width-32)
-    {
+    {	
         fputs("This position is not permitted in compressedThumbnail\n",stderr);
         return NULL;
     }
@@ -232,14 +233,24 @@ IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
 			#ifdef __DEBUG
 			for(k = heightPos - 64; k < heightPos + 64; k++)
 			{
-				for(l = widthPos - 32; l < widthPos +32; l++)
+				for(l = widthPos - 32; l < widthPos + 32; l++)
 				{
-					
+					if(k == heightPos - 64 || l == widthPos - 32 || k == heightPos + 63 || l == widthPos + 31)
+					{
+						color->imageData[k*color->widthStep + l*color->nChannels] = 0;
+						color->imageData[k*color->widthStep + l*color->nChannels+1] = 0;
+						color->imageData[k*color->widthStep + l*color->nChannels+2] = 255;
+					}
 				}
 			}
 			#endif
         }
     }
+
+	#ifdef __DEBUG
+	cvSaveImage("../saveImages/contour.jpg", color, 0);
+	cvReleaseImage(&color);
+	#endif
 
     return thumbnail;
 }
@@ -397,7 +408,6 @@ Place* learnLocation(int serialD, int deplAngle) {
     IplImage *thumbnail = 0;
     IplImage *gray = 0;
     Interest *extremums;
-    CvCapture *capture;
     int64_t *sumColumn;
     int64_t *smoothed;
     int64_t *derived;
@@ -454,6 +464,7 @@ Place* learnLocation(int serialD, int deplAngle) {
     free(sumColumn);
     free(smoothed);
     free(derived);
+	free(extremums);
 
     return place;
 }
