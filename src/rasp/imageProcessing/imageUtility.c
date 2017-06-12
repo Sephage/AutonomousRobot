@@ -43,7 +43,7 @@ IplImage* captureImage(){
     IplImage *gray = 0;
     CvCapture *capture;
 
-    capture = cvCaptureFromCAM(0);
+    capture = cvCaptureFromCAM(CV_CAP_ANY);
     image = cvQueryFrame(capture);
     if(!image)
     {
@@ -471,5 +471,5 @@ void learnLocation(int serialD, Place *place) {
     free(sumColumn);
     free(smoothed);
     free(derived);
-    free(extremums);
+//    free(extremums);
 }

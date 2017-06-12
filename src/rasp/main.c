@@ -45,7 +45,7 @@ int main(int* argv, char** argc) {
 		}
 		for(j = 0; j < place->landmarksNbr; j++){
 			if(place->landmarks[j].thumbnail != NULL) {
-				cvReleaseImage(&place->landmarks[j].thumbnail);
+		//		cvReleaseImage(&place->landmarks[j].thumbnail);
 			}
 		}
 	}
