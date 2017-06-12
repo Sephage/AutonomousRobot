@@ -113,10 +113,9 @@ void setup(){
 }
 
 void loop(){
+  Serial.println("NEW ");
   drive(-speedRot, speedRot);
   for(int i = 0; i < nbIter ; i++){
     Serial.println(readCompass());
   }
-  drive(0,0);
-  delay(1000000);
 }
