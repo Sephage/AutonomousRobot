@@ -16,6 +16,7 @@ typedef struct {
 }Interest;
 
 typedef struct {
+  int index;
   float angle;
   IplImage *thumbnail;
 }Landmark;

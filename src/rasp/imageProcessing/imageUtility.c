@@ -446,7 +446,8 @@ void learnLocation(int serialD, Place *place) {
 
         thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
         fAngle = (((float)extremums[i].index / gray->width)*IMAGE_VISION_ANGLE) - (IMAGE_VISION_ANGLE/2);
-        place->landmarks[i].thumbnail = thumbnail;
+		place->landmarks[i].index = extremums[i].index;        
+		place->landmarks[i].thumbnail = thumbnail;
         place->landmarks[i].angle = rAngle + fAngle;
 //        cvSaveImage(path, thumbnail, 0);
 //        cvReleaseImage(&thumbnail);
