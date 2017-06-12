@@ -191,8 +191,12 @@ float readCompass(){
 
 void readSensors(){
   askSensor(7);
+  delay(50);
   if(Serial1.available()){
     wall = Serial1.read() ;
+  }
+  else{
+    wall = -1;
   }
   float compass = readCompass();
   angle = compass;
@@ -252,7 +256,7 @@ void loop(){
       else if(msg[0] == 115){ //Command stop
         id = 3;
       }
-      else if(msg[0] == 97){ //ask angle
+      else if(msg[0] == 97){ //ask data
         id = 4;
       }
       else if(msg[0] == 100){ //drive for specific duration
