@@ -4,12 +4,13 @@
 #include <cv.h>
 #include <highgui.h>
 
-#define NB_LANDMARKS_MAX 15
+#define NB_LANDMARKS_MAX 20
+#define NB_LANDMARKS_IND 4
 #define SMOOTHNESS 7
 #define SLOPE 350
 #define CAMERA_VISION_ANGLE 51.6
-#define IMAGE_VISION_ANGLE 151.6
-#define AGNLES_CAPTURE {0,45,85,130,175}
+#define CAMERA_ROTATION 45
+#define ANGLES_CAPTURE {0,45,85,130,175}
 #define NB_CAPTURE 5
 
 typedef struct{

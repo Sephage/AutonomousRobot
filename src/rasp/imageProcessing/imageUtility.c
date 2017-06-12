@@ -41,7 +41,7 @@ IplImage* captureImage(){
     IplImage *gray = 0;
     CvCapture *capture;
 
-    capture = cvCaptureFromCAM(CV_CAP_ANY);
+    capture = cvCaptureFromCAM(1);
     image = cvQueryFrame(capture);
     if(!image)
     {
@@ -57,11 +57,11 @@ IplImage* captureImage(){
     return gray;
 }
 
-ImageToLearn captureAll(int serialD){
+ImageToLearn captureAll(int serialD, int placeNbr){
 
 	char* bufferSerial = (char*)malloc(4 * sizeof(char));
 	int i;
-	int angle[] = AGNLES_CAPTURE;
+	int angle[] = ANGLES_CAPTURE;
 	ImageToLearn images;
 	char name[50];
 
@@ -70,7 +70,7 @@ ImageToLearn captureAll(int serialD){
 		sleep(1);
 		images.image[i] = captureImage();
 		sleep(1);
-		sprintf(name, "../saveImages/captureAll%d.jpg", i);
+		sprintf(name, "../saveImages/captureAll%.3d_%.3d.jpg", placeNbr, i);
 		cvSaveImage(name, images.image[i], 0);
 	}
 
@@ -387,56 +387,59 @@ int diffComparison(IplImage* current, IplImage* learned){
     return diff;
 }
 
-void learnLocation(int serialD, Place *place) {
+void learnLocation(int serialD, Place *place, int placeNbr) {
     IplImage *thumbnail = 0;
-    IplImage *gray = 0;
     Interest *extremums;
+    ImageToLearn images;
     int64_t *sumColumn;
     int64_t *smoothed;
     int64_t *derived;
     uint8_t *bufferW = (uint8_t *)malloc(4*sizeof(char));
     int nbrLandmarks, nbrElt, rAngle;
     float fAngle;
+    const int angle[] = ANGLES_CAPTURE;
     char path[100];
-    int i;
+    int i, l;
 
     nbrLandmarks = 0;
     rAngle = askAngle(serialD, bufferW);
-    //gray = captureAll(serialD);
+    images = captureAll(serialD, placeNbr);
 
-    sumColumn = malloc(gray->width * sizeof(int64_t));
-    smoothed = malloc(gray->width * sizeof(int64_t));
-    derived = malloc(gray->width * sizeof(int64_t));
-
-    getSumColumnValues(gray, sumColumn);
-    lowFiltering(sumColumn, smoothed, gray->width, SMOOTHNESS);
-    sobel(smoothed, derived, gray->width);
-    extremums = extremumExtract(sumColumn, derived, &nbrElt, gray->width, SLOPE);
-    qsort((void *) extremums, nbrElt, sizeof(Interest), compare);
-
-	#ifdef __DEBUG
-    IplImage *graph = 0;
-    graph = cvCreateImage(cvSize(gray->width, gray->height), IPL_DEPTH_8U, 1);
-    printGraphOnImage(graph, smoothed);
-    cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
-    cvReleaseImage(&graph);
-	#endif
-
-
+    sumColumn = malloc(images.image[0]->width * sizeof(int64_t));
+    smoothed = malloc(images.image[0]->width * sizeof(int64_t));
+    derived = malloc(images.image[0]->width * sizeof(int64_t));
 
     mkdir("../saveImages/thumbnails", 0777);
-    for(i  = 0; i < NB_LANDMARKS_MAX && i < nbrElt; i++) {
-        sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", i);
+    for(l = 0; l < NB_CAPTURE; l++) {
 
-        thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
-        fAngle = (((float)extremums[i].index / gray->width)*IMAGE_VISION_ANGLE) - (IMAGE_VISION_ANGLE/2);
-		place->landmarks[i].index = extremums[i].index;
-		place->landmarks[i].thumbnail = thumbnail;
-        place->landmarks[i].angle = rAngle + fAngle;
-//        cvSaveImage(path, thumbnail, 0);
-//        cvReleaseImage(&thumbnail);
+      getSumColumnValues(images.image[l], sumColumn);
+      lowFiltering(sumColumn, smoothed, images.image[l]->width, SMOOTHNESS);
+      sobel(smoothed, derived, images.image[l]->width);
+      extremums = extremumExtract(sumColumn, derived, &nbrElt, images.image[l]->width, SLOPE);
+      qsort((void *) extremums, nbrElt, sizeof(Interest), compare);
 
-        nbrLandmarks++;
+      #ifdef __DEBUG
+        IplImage *graph = 0;
+        graph = cvCreateImage(cvSize(images.image[l]->width, images.image[l]->height), IPL_DEPTH_8U, 1);
+        printGraphOnImage(graph, smoothed);
+        cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
+        cvReleaseImage(&graph);
+    	#endif
+
+      for(i  = 0; i < NB_LANDMARKS_IND && i < nbrElt; i++) {
+          sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", nbrLandmarks);
+
+          thumbnail = compressedThumbnail(images.image[l], extremums[i].index, 240);
+          fAngle = (((float)extremums[i].index / images.image[l]->width)*CAMERA_VISION_ANGLE) - (CAMERA_VISION_ANGLE/2);
+  		    place->landmarks[nbrLandmarks].index = extremums[i].index;
+  		    place->landmarks[nbrLandmarks].thumbnail = thumbnail;
+          place->landmarks[nbrLandmarks].angle = rAngle + (CAMERA_ROTATION*l - 90) + fAngle;
+  //        cvSaveImage(path, thumbnail, 0);
+  //        cvReleaseImage(&thumbnail);
+
+          nbrLandmarks++;
+      }
+
     }
     place->landmarksNbr = nbrLandmarks;
     place->movementVectorAngle = rAngle;
@@ -449,9 +452,6 @@ void learnLocation(int serialD, Place *place) {
       cvReleaseImage(&graphOnImage);
   	#endif
 
-    cvSaveImage("../saveImages/image.jpg", gray, 0);
-
-    cvReleaseImage(&gray);
     free(bufferW);
     free(sumColumn);
     free(smoothed);

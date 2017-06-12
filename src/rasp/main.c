@@ -34,7 +34,7 @@ int main(int* argv, char** argc) {
   }*/
 
 	while(loop) {
-		learnLocation(serialD, place);
+		learnLocation(serialD, place, i);
 		savePlaceData(place, i);
 		saveImage(place, i);
 		i++;

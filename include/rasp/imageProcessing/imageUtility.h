@@ -31,7 +31,7 @@ IplImage* captureImage();
  *Capture 3 image by turnig servo motor and return the Concatenated image
  *
  */
-ImageToLearn captureAll(int serialD);
+ImageToLearn captureAll(int serialD, int placeNbr);
 
 /*
  * take an image and fill the array with the sum of columns for each column in the image
@@ -78,7 +78,7 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
 
 static int compare (void const *a, void const *b);
 
-void learnLocation(int serialD, Place *place);
+void learnLocation(int serialD, Place *place, int placeNbr);
 
 IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos);
 

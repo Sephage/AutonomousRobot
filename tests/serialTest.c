@@ -21,7 +21,7 @@ int main(){
 	int angle = askAngle(fd, buffer);
 	printf("angle =  %d \n", angle);*/
 
-	captureAll(fd);
+	captureAll(fd, 0);
 
 	close_s(fd);
 
