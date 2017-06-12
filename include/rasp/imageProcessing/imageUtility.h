@@ -31,7 +31,7 @@ IplImage* captureImage();
  *Capture 3 image by turnig servo motor and return the Concatenated image
  *
  */
-IplImage* captureAll(int serialD);
+ImageToLearn captureAll(int serialD);
 
 /*
  * take an image and fill the array with the sum of columns for each column in the image

@@ -3,8 +3,6 @@
 #include "../../../include/rasp/imageProcessing/saveLoad.h"
 #include "../../../include/serial/Serial.h"
 
-#include <stdio.h>
-
 /*For saving functions*/
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -59,40 +57,26 @@ IplImage* captureImage(){
     return gray;
 }
 
-IplImage* captureAll(int serialD){
-    IplImage *gray1 = 0, *gray2 = 0, *gray3 = 0, *result = 0;
-    char* bufferSerial = (char*)malloc(4 * sizeof(char));
+ImageToLearn captureAll(int serialD){
 
-    turnServo(serialD, 85, bufferSerial);
-    sleep(1);
-    gray2 = captureImage();
-    sleep(1);
-    cvSaveImage("../saveImages/cap2.jpg", gray2, 0);
+	char* bufferSerial = (char*)malloc(4 * sizeof(char));
+	int i;
+	int angle[] = AGNLES_CAPTURE;
+	ImageToLearn images;
+	char name[50];
 
-    turnServo(serialD, 0, bufferSerial);
-    sleep(1);
-    gray1 = captureImage();
-    sleep(1);
-    cvSaveImage("../saveImages/cap1.jpg", gray1, 0);
+	for(i = 0 ; i < NB_CAPTURE ; i++){
+		turnServo(serialD, angle[i], bufferSerial);
+		sleep(1);
+		images.image[i] = captureImage();
+		sleep(1);
+		sprintf(name, "../saveImages/captureAll%d.jpg", i);
+		cvSaveImage(name, images.image[i], 0);
+	}
 
-    turnServo(serialD, 175, bufferSerial);
-    sleep(1);
-    gray3 = captureImage();
-    sleep(1);
-    cvSaveImage("../saveImages/cap3.jpg", gray3, 0);
-
-    turnServo(serialD, 85, bufferSerial);
-
-    //Concatenate all 3 image in result
-    result = concatenateImage(gray1, gray2, gray3);
-    cvSaveImage("../saveImages/conca.jpg", result, 0);
-
-	cvReleaseImage(&gray1);
-	cvReleaseImage(&gray2);
-	cvReleaseImage(&gray3);
 	free(bufferSerial);
 
-    return result;
+	return images;
 }
 
 void sobel(int64_t *curve, int64_t *derived, int nbrColumn)
@@ -418,7 +402,7 @@ void learnLocation(int serialD, Place *place) {
 
     nbrLandmarks = 0;
     rAngle = askAngle(serialD, bufferW);
-    gray = captureAll(serialD);
+    //gray = captureAll(serialD);
 
     sumColumn = malloc(gray->width * sizeof(int64_t));
     smoothed = malloc(gray->width * sizeof(int64_t));
@@ -446,7 +430,7 @@ void learnLocation(int serialD, Place *place) {
 
         thumbnail = compressedThumbnail(gray, extremums[i].index, 240);
         fAngle = (((float)extremums[i].index / gray->width)*IMAGE_VISION_ANGLE) - (IMAGE_VISION_ANGLE/2);
-		place->landmarks[i].index = extremums[i].index;        
+		place->landmarks[i].index = extremums[i].index;
 		place->landmarks[i].thumbnail = thumbnail;
         place->landmarks[i].angle = rAngle + fAngle;
 //        cvSaveImage(path, thumbnail, 0);

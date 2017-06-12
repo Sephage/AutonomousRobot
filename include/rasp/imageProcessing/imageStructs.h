@@ -9,6 +9,12 @@
 #define SLOPE 350
 #define CAMERA_VISION_ANGLE 51.6
 #define IMAGE_VISION_ANGLE 151.6
+#define AGNLES_CAPTURE {0,45,85,130,175}
+#define NB_CAPTURE 5
+
+typedef struct{
+	IplImage* image[NB_CAPTURE];
+}ImageToLearn;
 
 typedef struct {
 	int index;
