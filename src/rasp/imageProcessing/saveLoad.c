@@ -76,6 +76,7 @@ int savePlaceData(Place* place, int placeNumber){
     fwrite(" ", 1, 1, file);
     for(j=0 ; j<place->landmarksNbr ; j++){
         fwrite(&(place->landmarks[j].angle), 6, 1, file);
+        fwrite(&(place->landmarks[j].index), 5, 1, file);
     }
     fclose(file);
 
@@ -127,6 +128,7 @@ void loadPlaceData(Place* place, int placeNumber){
     fread(empty, 1, 1, file);
     for(i=0 ; i<place->landmarksNbr ; i++){
         fread(&(place->landmarks[i].angle), 6, 1, file);
+        fread(&(place->landmarks[i].index), 5, 1, file);
     }
     printf("lN : %d\n", place->landmarksNbr);
     printf("mvA : %f\n", place->movementVectorAngle);
