@@ -10,7 +10,7 @@
 #define SLOPE 350
 #define CAMERA_VISION_ANGLE 51.6
 #define CAMERA_ROTATION 45
-#define ANGLES_CAPTURE {0,45,85,130,175}
+#define ANGLES_CAPTURE {175,130,85,45,0}
 #define NB_CAPTURE 5
 
 typedef struct{
