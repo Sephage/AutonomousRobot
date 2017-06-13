@@ -68,7 +68,7 @@ IplImage* getThumbnail(IplImage* image, int widthPos, int heightPos);
  */
 int compareImage(IplImage* current, IplImage* learned);
 
-int diffComparison(IplImage* current, IplImage* learned);
+float diffComparison(IplImage* current, IplImage* learned);
 
 void lowFiltering(int64_t* curve, int64_t* smoothed, int nbrColumn, int size);
 

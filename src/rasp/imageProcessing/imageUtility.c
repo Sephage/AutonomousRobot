@@ -41,7 +41,7 @@ IplImage* captureImage(){
     IplImage *gray = 0;
     CvCapture *capture;
 
-    capture = cvCaptureFromCAM(1);
+    capture = cvCaptureFromCAM(1); // 0 for local webcam, 1 for external webcam or -1 for any. Use 0 for ext webcam on rpi.
     image = cvQueryFrame(capture);
     if(!image)
     {
@@ -304,6 +304,7 @@ int compareImage(IplImage* current, IplImage* learned)
     int height = current->height;
     int step = current->widthStep;
     int nChannels = current->nChannels;
+    float angle;
     int i,j,k;
     int recognition = 0;
 
@@ -346,13 +347,13 @@ int compareImage(IplImage* current, IplImage* learned)
     return recognition;
 }
 
-int diffComparison(IplImage* current, IplImage* learned){
+float diffComparison(IplImage* current, IplImage* learned){
     int width = current->width;
     int height = current->height;
     int step = current->widthStep;
     int nChannels = current->nChannels;
     int i,j,k;
-    int diff = 0;
+    float diff = 0;
 
     if(width != learned->width)
     {
@@ -384,6 +385,8 @@ int diffComparison(IplImage* current, IplImage* learned){
             }
         }
     }
+    diff = diff/(float)(32*32*255);
+
     return diff;
 }
 
@@ -396,7 +399,7 @@ void learnLocation(int serialD, Place *place, int placeNbr) {
     int64_t *derived;
     uint8_t *bufferW = (uint8_t *)malloc(4*sizeof(char));
     int nbrLandmarks, nbrElt, rAngle;
-    float fAngle;
+    float fAngle, angleI;
     const int angle[] = ANGLES_CAPTURE;
     char path[100];
     int i, l;
@@ -433,7 +436,18 @@ void learnLocation(int serialD, Place *place, int placeNbr) {
           fAngle = (((float)extremums[i].index / images.image[l]->width)*CAMERA_VISION_ANGLE) - (CAMERA_VISION_ANGLE/2);
   		    place->landmarks[nbrLandmarks].index = extremums[i].index;
   		    place->landmarks[nbrLandmarks].thumbnail = thumbnail;
-          place->landmarks[nbrLandmarks].angle = rAngle + (CAMERA_ROTATION*l - 90) + fAngle;
+          angleI = rAngle + (CAMERA_ROTATION*l - 90) + fAngle;
+          if(angleI < 0 ) {
+            place->landmarks[nbrLandmarks].angle = angleI + 360;
+          }
+          else if(angleI >= 360 ) {
+            place->landmarks[nbrLandmarks].angle = angleI - 360;
+          }
+          else {
+            place->landmarks[nbrLandmarks].angle = angleI;
+          }
+          place->landmarks[nbrLandmarks].angle = (place->landmarks[nbrLandmarks].angle*M_PI)/180;
+  //        printf("L'angle initial est de %f, l'angle en radian est de %f, angle bousosle est %d\n", angleI, place->landmarks[nbrLandmarks].angle, rAngle);
   //        cvSaveImage(path, thumbnail, 0);
   //        cvReleaseImage(&thumbnail);
 
