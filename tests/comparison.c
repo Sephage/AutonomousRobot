@@ -1,4 +1,5 @@
 #include "../include/rasp/imageProcessing/imageStructs.h"
+#include "../include/rasp/imageProcessing/saveLoad.h"
 #include "../include/rasp/recognition/recognition.h"
 
 #include <highgui.h>
@@ -9,45 +10,21 @@
 
 int main(int argc, char **argv)
 {
-	Place *places = (Place *) malloc(3*sizeof(Place));
-	char path[100];
-	Place current;
-	int i,j;
+	Place *places = (Place *) malloc(6*sizeof(Place));
+	Place *current;
 
+	ImageToLearn currentImages;
 
+	currentImages.image[0] = cvLoadImage("../saveImages/captureAll003_000.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	currentImages.image[1] = cvLoadImage("../saveImages/captureAll003_001.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	currentImages.image[2] = cvLoadImage("../saveImages/captureAll003_002.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	currentImages.image[3] = cvLoadImage("../saveImages/captureAll003_003.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+	currentImages.image[4] = cvLoadImage("../saveImages/captureAll003_004.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 
-	places[0].landmarksNbr = 5;
-	current.landmarksNbr = 5;
-	for(i = 0; i < 5; i++)
-	{
-		sprintf(path, "../saveImages/%d_%d.jpg", i);
+	loadPlacesData(places, 6);
+	current = &places[3];
 
-		places[0].landmarks[i].thumbnail = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);
-		current.landmarks[i].thumbnail = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);
+	loadImages(places, 6);	
 
-		places[0].landmarks[i].angle = 0.25*i;
-		current.landmarks[i].angle = 0.25*i;
-	}
-
-	places[1].landmarksNbr = 5;
-	for(i = 0; i < 5; i++)
-	{
-		sprintf(path, "../saveImages/place02/thumbnails/thumbnails%.3d.jpg", i);
-
-		places[1].landmarks[i].thumbnail = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);
-
-		places[1].landmarks[i].angle = 0.5*i;
-	}
-
-	places[2].landmarksNbr = 5;
-	for(i = 0; i < 5; i++)
-	{
-		sprintf(path, "../saveImages/place03/thumbnails/thumbnails%.3d.jpg", i);
-
-		places[2].landmarks[i].thumbnail = cvLoadImage(path, CV_LOAD_IMAGE_GRAYSCALE);
-
-		places[2].landmarks[i].angle = 0.5*i;
-	}
-
-	winner(places, &current, 3);
+	winner(places, current, &currentImages, 6);
 }

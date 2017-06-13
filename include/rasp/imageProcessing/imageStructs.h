@@ -14,6 +14,12 @@
 #define NB_CAPTURE 5
 
 typedef struct{
+	int r;
+	int g;
+	int b;
+}Rgb;
+
+typedef struct{
 	IplImage* image[NB_CAPTURE];
 }ImageToLearn;
 
