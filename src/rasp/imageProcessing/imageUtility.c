@@ -97,7 +97,7 @@ void sobel(int64_t *curve, int64_t *derived, int nbrColumn)
     }
 
     //Calcul du dernier élément en créant une redondance de l'information
-    derived[i+1] = -curve[i]+curve[i+1];
+    //derived[i+1] = -curve[i]+curve[i+1]; //Removed temporarly because memory error
 }
 
 void lowFiltering(int64_t *curve, int64_t *smoothed, int nbrColumn, int size)
