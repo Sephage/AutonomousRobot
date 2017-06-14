@@ -19,7 +19,7 @@ unsigned char wall = 0;
 
 Servo myservo;
 
-
+//unsigned long time;
 
 //############################     SETUP FUNCTIONS      ##################################
 
@@ -279,4 +279,6 @@ void loop(){
     }
   }
   readSensors();
+  //Serial.println(millis() - time);
+  //time = millis();
 }
