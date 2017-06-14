@@ -80,7 +80,7 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 		}
 
 		#ifdef __DEBUG
-		if(index < 5)
+		if(index < 4)
 			placeImNbr = 0;
 		else if(index < 8)
 			placeImNbr = 1;
@@ -102,11 +102,11 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 
 
 
-		if(currentImagec = 0)
+		if(currentImagec == 0)
 		{
 			currentImagec = cvCreateImage(cvGetSize(currentImages->image[0]), IPL_DEPTH_8U, 3);
 
-			if(i < 5)
+			if(i < 4)
 				currentImNbr = 0;
 			else if(i < 8)
 				currentImNbr = 1;
@@ -120,7 +120,6 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 			
 			cvCvtColor(currentImages->image[currentImNbr], currentImagec, CV_GRAY2RGB);
 		}
-
 
 
 		Rgb rgb;
