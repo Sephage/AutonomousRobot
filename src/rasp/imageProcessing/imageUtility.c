@@ -470,5 +470,9 @@ void learnLocation(int serialD, Place *place, int placeNbr) {
     free(sumColumn);
     free(smoothed);
     free(derived);
-//    free(extremums);
+    free(extremums);
+
+		for(l = 0; l < NB_CAPTURE; l++) {
+			cvReleaseImage(&(images.image[l]));
+		}
 }
