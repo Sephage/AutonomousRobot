@@ -435,7 +435,7 @@ void learnLocation(int serialD, Place *place, int placeNbr) {
       for(i  = 0; i < NB_LANDMARKS_IND && i < nbrElt; i++) {
           sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", nbrLandmarks);
 
-          thumbnail = compressedThumbnail(images.image[l], extremums[i].index, 240);
+          thumbnail = compressedThumbnail(images.image[l], extremums[i].index, HEIGHTPOS);
           fAngle = (((float)extremums[i].index / images.image[l]->width)*CAMERA_VISION_ANGLE) - (CAMERA_VISION_ANGLE/2);
   		    place->landmarks[nbrLandmarks].index = extremums[i].index;
   		    place->landmarks[nbrLandmarks].thumbnail = thumbnail;
