@@ -162,7 +162,7 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
     while(--p >= 0)
     {
         extremums[p].index = locations[p];
-        extremums[p].value = abs(derived[locations[i]+1]-derived[locations[i]]);
+        extremums[p].value = abs(derived[locations[p]+1]-derived[locations[p]]);
         //extremums[p].value = curve[p];
     }
 
