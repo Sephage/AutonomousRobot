@@ -12,6 +12,7 @@ int main(int argc, char **argv)
 {
 	Place *places = (Place *) malloc(6*sizeof(Place));
 	Place *current;
+	int i;
 
 	ImageToLearn currentImages;
 
@@ -22,9 +23,13 @@ int main(int argc, char **argv)
 	currentImages.image[4] = cvLoadImage("../saveImages/captureAll003_004.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 
 	loadPlacesData(places, 6);
-	current = &places[3];
+	loadImages(places, 6);
+	current = &places[5];
 
-	loadImages(places, 6);	
+	/*for(i = 0; i < 6; i++)
+	{
+		winner(places, &places[i], &currentImages, 6);
+	}*/
 
 	winner(places, current, &currentImages, 6);
 }

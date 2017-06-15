@@ -41,7 +41,7 @@ IplImage* captureImage(){
     IplImage *gray = 0;
     CvCapture *capture;
 
-    capture = cvCaptureFromCAM(1); // 0 for local webcam, 1 for external webcam or -1 for any. Use 0 for ext webcam on rpi.
+    capture = cvCaptureFromCAM(0); // 0 for local webcam, 1 for external webcam or -1 for any. Use 0 for ext webcam on rpi.
     image = cvQueryFrame(capture);
     if(!image)
     {
@@ -97,7 +97,7 @@ void sobel(int64_t *curve, int64_t *derived, int nbrColumn)
     }
 
     //Calcul du dernier élément en créant une redondance de l'information
-    //derived[i+1] = -curve[i]+curve[i+1]; //Removed temporarly because memory error
+	derived[i] = -curve[i-1]+curve[i];
 }
 
 void lowFiltering(int64_t *curve, int64_t *smoothed, int nbrColumn, int size)
