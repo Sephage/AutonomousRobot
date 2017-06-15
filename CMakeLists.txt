@@ -18,9 +18,10 @@ add_executable (client src/controllerComputer/main.c src/controllerComputer/clie
 #Creation of executable for test
 add_executable (serial tests/serialTest.c src/serial/Serial.c src/rasp/imageProcessing/imageUtility.c src/rasp/imageProcessing/saveLoad.c)
 add_executable (comparison tests/comparison.c src/rasp/recognition/recognition.c src/rasp/imageProcessing/imageUtility.c src/serial/Serial.c src/rasp/imageProcessing/saveLoad.c)
-add_executable (compass tests/compass_test.c src/serial/Serial.c)
+add_executable (capture tests/testCapture.c src/rasp/imageProcessing/imageUtility.c src/serial/Serial.c src/rasp/imageProcessing/saveLoad.c src/rasp/server/server.c)
 
 # Linking with opencv and math.h
 target_link_libraries (datas ${OpenCV_LIBS} m)
 target_link_libraries (serial ${OpenCV_LIBS} m)
 target_link_libraries (comparison ${OpenCV_LIBS} m)
+target_link_libraries (capture ${OpenCV_LIBS} m)
