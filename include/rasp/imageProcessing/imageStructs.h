@@ -12,6 +12,7 @@
 #define CAMERA_ROTATION 45
 #define ANGLES_CAPTURE {175,130,85,45,0}
 #define NB_CAPTURE 5
+#define HEIGHTPOS 360
 
 typedef struct{
 	int r;

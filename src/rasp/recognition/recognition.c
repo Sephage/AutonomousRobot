@@ -13,18 +13,18 @@ int winner(Place *places, Place *current, ImageToLearn *currentImages, int place
 {
 	int i;
 	int index;
-	float minimum;
+	float maximum;
 	float activity;
 
 	index = -1;
-	minimum = FLT_MAX;
+	maximum = FLT_MIN;
 	for(i = 0; i < placesNbr; i++)
 	{
 		activity = computeActivities(&places[i], current, currentImages, i);
 
-		if(activity < minimum)
+		if(activity > maximum)
 		{
-			minimum = activity;
+			maximum = activity;
 			index = i;
 		}
 	}
@@ -231,7 +231,7 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 
 
 		widthPos = (current->landmarks[i]).index;
-		heightPos = 240;
+		heightPos = HEIGHTPOS;
 
 		for(k = heightPos - 64; k < heightPos + 64; k++)
 		{
@@ -281,6 +281,8 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 
 		activity += minimum;
 	}
+
+	activity = 1 - (activity/NB_LANDMARKS_MAX);
 
 	#ifdef __DEBUG
 	printf("L'activité totale est de %lf\n\n", activity);
