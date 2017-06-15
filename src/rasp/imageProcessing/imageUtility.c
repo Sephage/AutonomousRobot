@@ -68,6 +68,9 @@ ImageToLearn captureAll(int serialD, int placeNbr){
 	for(i = 0 ; i < NB_CAPTURE ; i++){
 		turnServo(serialD, angle[i], bufferSerial);
 		sleep(1);
+		if(i == 0){
+			sleep(1);
+		}
 		images.image[i] = captureImage();
 		sleep(1);
 		sprintf(name, "../saveImages/captureAll%.3d_%.3d.jpg", placeNbr, i);
