@@ -71,10 +71,10 @@ ImageToLearn captureAll(int serialD, int placeNbr){
 			usleep(1000 * 1000);
 		}
 		else{
-			usleep(200 * 1000);
+			usleep(300 * 1000);
 		}
 		images.image[i] = captureImage();
-		usleep(500 * 1000);
+		//usleep(500 * 1000);
 		sprintf(name, "../saveImages/captureAll%.3d_%.3d.jpg", placeNbr, i);
 		cvSaveImage(name, images.image[i], 0);
 	}
