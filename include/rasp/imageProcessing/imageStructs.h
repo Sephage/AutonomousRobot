@@ -13,6 +13,10 @@
 #define ANGLES_CAPTURE {175,130,85,45,0}
 #define NB_CAPTURE 5
 #define HEIGHTPOS 120
+#define CAMPORT -1
+#define LMSIZE 32
+#define SCALEX 2
+#define SCALEY 4
 
 typedef struct{
 	int r;

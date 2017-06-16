@@ -41,7 +41,7 @@ IplImage* captureImage(){
     IplImage *gray = 0;
     CvCapture *capture;
 
-    capture = cvCaptureFromCAM(1); // 0 for local webcam, 1 for external webcam or -1 for any. Use 0 for ext webcam on rpi.
+    capture = cvCaptureFromCAM(CAMPORT); // 0 for local webcam, 1 for external webcam or -1 for any. Use 0 for ext webcam on rpi.
     image = cvQueryFrame(capture);
     if(!image)
     {
@@ -146,7 +146,7 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
     }
 
 
-    for(i = 32; i < nbrColumn-33; i++)
+    for(i = LMSIZE; i < nbrColumn-LMSIZE+1; i++)
     {
         if(derived[i]*derived[i+1] < 0)
         {
@@ -196,33 +196,34 @@ IplImage *compressedThumbnail(IplImage *image, int widthPos, int heightPos)
     cvCvtColor(image, color, CV_GRAY2RGB);
 	#endif
 
-    if(widthPos < 32 || widthPos >= image->width-32)
+    if(widthPos < LMSIZE || widthPos >= image->width-LMSIZE)
     {
         fputs("This position is not permitted in compressedThumbnail\n",stderr);
         return NULL;
     }
 
-    thumbnail = cvCreateImage(cvSize(32, 32), IPL_DEPTH_8U, 1);
+    thumbnail = cvCreateImage(cvSize(LMSIZE, LMSIZE), IPL_DEPTH_8U, 1);
     if(thumbnail == 0)
     {
         fputs("Allocation failed in compressedThumbnail\n",stderr);
         return NULL;
     }
 
-    for(i = 0; i < 32; i++)
+    for(i = 0; i < LMSIZE; i++)
     {
-        for(j = 0; j < 32; j++)
+        for(j = 0; j < LMSIZE; j++)
         {
             thumbnailPos = i * thumbnail->widthStep + j;
-            imagePos = (4 * i + heightPos - 64) * image->widthStep + (2 * j + widthPos - 32);
+            imagePos = (SCALEY * i + heightPos - (0.5*SCALEY*LMSIZE)) * image->widthStep + (SCALEX * j + widthPos - (0.5*SCALEX*LMSIZE));
             thumbnail->imageData[thumbnailPos]=image->imageData[imagePos];
 
 			#ifdef __DEBUG
-			for(k = heightPos - 64; k < heightPos + 64; k++)
+			for(k = heightPos - (0.5*SCALEY*LMSIZE); k < heightPos + (0.5*SCALEY*LMSIZE); k++)
 			{
-				for(l = widthPos - 32; l < widthPos + 32; l++)
+				for(l = widthPos - (0.5*SCALEX*LMSIZE); l < widthPos + (0.5*SCALEX*LMSIZE); l++)
 				{
-					if(k == heightPos - 64 || l == widthPos - 32 || k == heightPos + 63 || l == widthPos + 31)
+					if(	k == heightPos - (0.5*SCALEY*LMSIZE) || l == widthPos - (0.5*SCALEX*LMSIZE) ||
+						k == heightPos + (0.5*SCALEY*LMSIZE) - 1 ||	l == widthPos + (0.5*SCALEX*LMSIZE) - 1)
 					{
 						color->imageData[k*color->widthStep + l*color->nChannels] = 0;
 						color->imageData[k*color->widthStep + l*color->nChannels+1] = 0;
