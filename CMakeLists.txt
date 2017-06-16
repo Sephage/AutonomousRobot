@@ -9,7 +9,7 @@ find_package (OpenCV REQUIRED)
 
 
 # Creation of executable for the raspberry pi
-add_executable (datas src/rasp/main.c src/rasp/imageProcessing/imageUtility.c src/serial/Serial.c src/rasp/imageProcessing/saveLoad.c src/rasp/server/server.c)
+add_executable (datas src/rasp/main.c src/rasp/imageProcessing/imageUtility.c src/serial/Serial.c src/rasp/imageProcessing/saveLoad.c src/rasp/server/server.c src/rasp/recognition/recognition.c)
 
 # Creation of executable for the client
 add_executable (client src/controllerComputer/main.c src/controllerComputer/client.c)
