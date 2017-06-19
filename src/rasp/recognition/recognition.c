@@ -9,7 +9,7 @@
 
 #define THETA 0.5
 
-#define __DEBUG
+//#define __DEBUG
 
 int* multiWinner(Place *places, Place *current, ImageToLearn *currentImages, int placesNbr, int nbWinner)
 {
