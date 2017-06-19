@@ -65,7 +65,7 @@ int main(int* argv, char** argc) {
     loop = 0;
 
     placesLearned = malloc(nbrPlace*sizeof(Place));
-    loadImages(placesLearned, nbrPlace);
+    loadPlacesData(placesLearned, nbrPlace);
     loadImages(placesLearned, nbrPlace);
 
     while(loop < 10){
