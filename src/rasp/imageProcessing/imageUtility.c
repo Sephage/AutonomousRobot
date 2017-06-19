@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <math.h>
 
-#define __DEBUG
+//#define __DEBUG
 
 IplImage* concatenateImage(IplImage* image1, IplImage* image2, IplImage* image3) {
 

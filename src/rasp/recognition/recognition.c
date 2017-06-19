@@ -7,8 +7,55 @@
 #include <stdio.h>
 #include <math.h>
 
-#define __DEBUG
+//#define __DEBUG
 
+int* multiWinner(Place *places, Place *current, ImageToLearn *currentImages, int placesNbr, int nbWinner)
+{
+	int i;
+        int nbrIndex, j;
+	int* index;
+	float* maximum;
+	float activity;
+
+        /* Faire a l'extérieur*/
+        if(nbWinner == 0){
+            puts("Error nbWinner in function winner");
+            return NULL;
+        }
+        index = malloc(nbWinner * sizeof(int));
+        maximum = malloc(nbWinner * sizeof(float));
+        /*****************************************************************************/
+        for(i=0 ; i < nbWinner ; i++){
+	    maximum[i] = FLT_MIN;
+        }
+	for(i = 0; i < placesNbr; i++)
+	{
+		activity = computeActivities(&places[i], current, currentImages, i);
+                while(j < nbrIndex && activity < maximum[j]){
+                    j++;
+                }
+                if(j < nbrIndex){
+                    if(nbrIndex == nbWinner){
+                        int k;
+                        for(k=nbWinner-1 ; k>j ; k--){
+                            maximum[k] = maximum[k-1];
+                            index[k] = index[k-1];
+                        }
+                        maximum[j] = activity;
+                        index[j] = i;
+                    }
+                    else{
+                        maximum[j] = activity;
+                        index[j] = i;
+                    }
+                }
+	}
+
+	return index;
+}
+
+//----------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------
 int winner(Place *places, Place *current, ImageToLearn *currentImages, int placesNbr)
 {
 	int i;
@@ -35,6 +82,8 @@ int winner(Place *places, Place *current, ImageToLearn *currentImages, int place
 
 	return index;
 }
+
+
 
 float computeActivities(Place *place, Place *current, ImageToLearn *currentImages, int placeNbr)
 {
