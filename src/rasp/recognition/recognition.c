@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#define THETA 0.5
+
 //#define __DEBUG
 
 int* multiWinner(Place *places, Place *current, ImageToLearn *currentImages, int placesNbr, int nbWinner)
@@ -117,9 +119,10 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 			diffAngle = (place->landmarks[j]).angle - (current->landmarks[i]).angle;
 			diffAngle = diffAngle < -M_PI ? diffAngle + (2 * M_PI) : diffAngle;
 			diffAngle = diffAngle > M_PI ? diffAngle - (2 * M_PI) : diffAngle;
-			diffAngle = fabs(diffAngle);
+			//diffAngle = fabs(diffAngle);
+			diffAngle = 1/(THETA*2.51)*exp(-0.5*pow((diffAngle/THETA),2));
 
-			evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (diffAngle/M_PI);
+			evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (diffAngle/M_PI); 
 
 			if(evaluation < minimum)
 			{
