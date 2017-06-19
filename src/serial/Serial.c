@@ -210,7 +210,7 @@ int askAngle(int fd, uint8_t *bufferW){
 
 	int val = write_s(fd, bufferW, 4);
 
-	int val2 = read_s(fd, bufferR, 10, 200);
+	int val2 = read_s(fd, bufferR, 10, 800);
 
 	angle = atof(bufferR);
 
