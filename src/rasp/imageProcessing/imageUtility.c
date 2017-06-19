@@ -391,9 +391,9 @@ float diffComparison(IplImage* current, IplImage* learned){
             }
         }
     }
-    diff = diff/(float)(32*32*255);
+    diff = diff/(32*32*255);
 
-    return diff;
+    return (1 - diff);
 }
 
 void learnLocation(int serialD, Place *place, int placeNbr) {

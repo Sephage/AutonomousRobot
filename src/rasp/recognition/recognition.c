@@ -9,7 +9,7 @@
 
 #define THETA 0.5
 
-//#define __DEBUG
+#define __DEBUG
 
 int* multiWinner(Place *places, Place *current, ImageToLearn *currentImages, int placesNbr, int nbWinner)
 {
@@ -91,7 +91,7 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 {
 	int i, j;
 	int index;
-	float minimum;
+	float maximum;
 	float activity;
 	float diffAngle;
 	float evaluation;
@@ -112,7 +112,7 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 
 	for(i = 0; i < current->landmarksNbr; i++)
 	{
-		minimum = FLT_MAX;
+		maximum = FLT_MIN;
 
 		for(j = 0; j < place->landmarksNbr; j++)
 		{
@@ -122,12 +122,12 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 			//diffAngle = fabs(diffAngle);
 			diffAngle = 1/(THETA*2.51)*exp(-0.5*pow((diffAngle/THETA),2));
 
-			evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (diffAngle/M_PI); 
-
-			if(evaluation < minimum)
+			//evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (1 - (diffAngle/M_PI)); 
+			evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * diffAngle;
+			if(evaluation > maximum)
 			{
 				index = j;
-				minimum = evaluation;
+				maximum = evaluation;
 			}
 		}
 
@@ -331,10 +331,10 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 		printf("L'imagette %d correspond à l'imagette %d\n", i, index);
 		#endif
 
-		activity += minimum;
+		activity += maximum;
 	}
 
-	activity = 1 - (activity/NB_LANDMARKS_MAX);
+	activity = (activity/NB_LANDMARKS_MAX);
 
 	#ifdef __DEBUG
 	printf("L'activité totale est de %lf\n\n", activity);
