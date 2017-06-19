@@ -52,8 +52,8 @@ int main(int* argv, char** argc) {
 //        scanf("%c", cont);
 //        if(strcmp((const char *)cont, "n") == 0 || strcmp((const char *)cont, "N") == 0) {
         c = getchar();
-		if(c != 'n' || c != 'N'){
-			loop = 0;
+        if(c == 'n' || c == 'N'){
+            loop = 0;
         }
         for(j = 0; j < place->landmarksNbr; j++){
             if(place->landmarks[j].thumbnail != NULL) {
@@ -62,7 +62,7 @@ int main(int* argv, char** argc) {
         }
     }
 
-    loop = 1;
+    loop = 0;
 
     placesLearned = malloc(nbrPlace*sizeof(Place));
     loadImages(placesLearned, nbrPlace);
