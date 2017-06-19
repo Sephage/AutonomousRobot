@@ -14,7 +14,7 @@ void setup(){
 void loop(){
     //Serial.println("start");
     myservo.write(175);
-    if(myservo.read() != 175){
+    //if(myservo.read() != 175){
       Serial.println(millis());
-    }
+   // }
 }

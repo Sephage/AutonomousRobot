@@ -13,9 +13,11 @@ int nbBytesRecus=0;
 float angle = 0;
 int wheelBase = 223;
 float mmpd = (float)(wheelBase * PI / 360.0);
-int speedTurn = 300;
+int speedTurn = 75;
 int speedDrive = 200;
 unsigned char wall = 0;
+int epsilon = 3;
+int epsilon2 = 5;
 
 Servo myservo;
 
@@ -89,16 +91,44 @@ void driveMMS(int value){
   drive(0,0);
 }
 
-void turn(int angle){
+//Deprecated
+void turnOld(int angleWanted){
   float pauseTime;
   int dir = -1;
-  if(angle < 0){
-    angle *= -1;
+  if(angleWanted < 0){
+    angleWanted *= -1;
     dir = 1;
   }
-  pauseTime = (mmpd * angle / speedTurn);
+  pauseTime = (mmpd * angleWanted / speedTurn);
   drive2(speedTurn, dir);
   delay((int)(pauseTime * 1000));
+  drive(0,0);
+}
+
+void turn(int angleWanted){
+  int dir = -1;
+  int diff = 0;
+  int diffOld = 0;
+  int turning = 1;
+  if(angleWanted < 0){
+    angleWanted = 0;
+  }
+  else if(angleWanted > 360){
+    angleWanted = 360;
+  }
+  diff = angle - angleWanted;
+  if(diff > 0){
+    dir = 1;
+  }
+  drive2(speedTurn, dir);
+  do{
+    diffOld = diff;
+    angle = (int)readCompass();
+    diff = angle - angleWanted;
+    if(abs(diff) > abs(diffOld) + epsilon){
+      turning = 0;
+    }
+  }while( (abs(diff)) > epsilon);//((abs(diff)) > epsilon) &&
   drive(0,0);
 }
 
@@ -184,7 +214,7 @@ float readCompass(){
   // Convert radians to degrees for readability.
   float headingDegrees = heading * 180/M_PI; 
 
-  delay(100);//of course it can be delayed longer.
+  delay(50);//of course it can be delayed longer.
   
   return headingDegrees;
 }

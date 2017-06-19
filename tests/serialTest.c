@@ -10,10 +10,10 @@ int main(){
 	//driveSpeed(fd, 200, buffer);
 	//sleep(2);
 	//stop(fd, buffer);
-	driveMMS(fd, 3000, buffer);
+	//driveMMS(fd, 3000, buffer);
 	//turnServo(fd,0,buffer);
-	sleep(5);
-	driveMMS(fd, -3000, buffer);
+	//sleep(5);
+	//driveMMS(fd, -3000, buffer);
 	//turn(fd, 180, buffer);
 	//sleep(3);
 	//turn(fd, -180, buffer);
@@ -21,17 +21,13 @@ int main(){
 	//turnServo(fd,180,buffer);
 	//int angle = askAngle(fd, buffer);
 	//printf("angle =  %d \n", angle);
-	sleep(5);
-	driveMMS(fd, 3000, buffer);
-	//turnServo(fd,0,buffer);
-	sleep(5);
-	driveMMS(fd, -3000, buffer);
-	sleep(5);
-	driveMMS(fd, 3000, buffer);
-	//turnServo(fd,0,buffer);
-	sleep(5);
-	driveMMS(fd, -3000, buffer);
-
+	turn(fd, 180, buffer);
+	sleep(6);
+	turn(fd, 0, buffer);
+	sleep(6);
+	turn(fd, 90, buffer);
+	sleep(6);
+	turn(fd, 180, buffer);
 	close_s(fd);
 
 	free(buffer);
