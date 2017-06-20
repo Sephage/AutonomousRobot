@@ -1,0 +1,6 @@
+expérience 1:
+	Ligne au milieu de l'image
+expérience 2:
+	Ligne relevé au quart supérieur
+expérience 3:
+	Utilisation d'une gaussienne

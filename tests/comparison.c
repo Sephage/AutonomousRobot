@@ -26,10 +26,10 @@ int main(int argc, char **argv)
 	loadImages(places, 10);
 	current = &places[4];
 
-	for(i = 0; i < 10; i++)
+	/*for(i = 0; i < 10; i++)
 	{
 		winner(places, &places[i], &currentImages, 10);
-	}
+	}*/
 
-	//winner(places, current, &currentImages, 10);
+	winner(places, current, &currentImages, 10);
 }

@@ -148,7 +148,7 @@ Interest *extremumExtract(int64_t *curve, int64_t *derived, int *nbrElt, int nbr
     }
 
 
-    for(i = LMSIZE; i < nbrColumn-LMSIZE+1; i++)
+    for(i = LMSIZE; i < nbrColumn-LMSIZE; i++)
     {
         if(derived[i]*derived[i+1] < 0)
         {
