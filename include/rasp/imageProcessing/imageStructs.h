@@ -16,7 +16,7 @@
 #define CAMPORT 0
 #define LMSIZE 32
 #define SCALEX 2
-#define SCALEY 4
+#define SCALEY 6
 
 typedef struct{
 	int r;
