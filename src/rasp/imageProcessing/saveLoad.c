@@ -158,11 +158,11 @@ void loadImages(Place* places, int numberPlaces){
 
 int loadNbPlace(){
    int nbPlaces;
-   FILE* file;
+   int file;
 
-   file = fopen("../saveImages/PlaceNb.sav","r");
-   if(fread(&nbPlaces, 5, 1, file) == 0) puts("ERROR reading nbplaces\n");
-   fclose(file);
+   file = open("../saveImages/PlaceNb.sav", O_RDONLY);
+   if(read(file, &nbPlaces, 5) == -1) puts("ERROR reading nbplaces\n");
+   close(file);
 
    return nbPlaces;
 }

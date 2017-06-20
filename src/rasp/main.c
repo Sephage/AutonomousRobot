@@ -22,10 +22,11 @@ int main(int argc, char** argv) {
     Place *placesLearned;
     Server server;
     char *cont =  (char *)malloc(sizeof(char));
-    int i = 0, loop =1, j = 0;
+    int i = 0, loop = 0, j = 0;
     int c = 0;
     int nbrPlace = 0;
     int index;
+    int nbTurn = 10;
 
     int mode = 2, sub = 0;
     extern char* optarg;
@@ -33,7 +34,7 @@ int main(int argc, char** argv) {
 
     uint8_t* buf = malloc(sizeof(uint8_t));
 
-    while((c = getopt(argc, argv, "alt")) != -1){
+    while((c = getopt(argc, argv, "altn:")) != -1){
         switch(c){
             case 'a':
                 mode = 0;
@@ -43,6 +44,9 @@ int main(int argc, char** argv) {
                 break;
             case 't':
                 mode = 2;
+                break;
+            case 'n':
+                nbTurn = atoi(optarg);
                 break;
             default:
                 printf("Mode par défaut learning + autonome, -l: learning, -a: autonome");
@@ -62,8 +66,15 @@ int main(int argc, char** argv) {
         sendEndMsgToClient(server, "End");
         i++;
         }*/
+    if(mode == 0){
+        nbrPlace = loadNbPlace();
+        placesLearned = malloc(nbrPlace*sizeof(Place));
+
+        loadPlacesData(placesLearned, nbrPlace);
+        loadImages(placesLearned, nbrPlace);
+    }
     
-    while(loop) {
+    while(loop < nbTurn) {
 
         learnLocation(serialD, place, i);
         if((mode == 2 && sub == 0) || mode == 1){ //learning
@@ -80,41 +91,31 @@ int main(int argc, char** argv) {
             if(c == 'n' || c == 'N'){
                 if(mode == 1){
                     saveNbPlace(nbrPlace);
-                    loop = 0;
+                    loop = nbTurn;
                 }
-                else
+                else{
                     sub = 1;
-            }
-            for(j = 0; j < place->landmarksNbr; j++){
-                if(place->landmarks[j].thumbnail != NULL) {
-                    cvReleaseImage(&(place->landmarks[j].thumbnail));
+                    placesLearned = malloc(nbrPlace*sizeof(Place));
+
+                    loadPlacesData(placesLearned, nbrPlace);
+                    loadImages(placesLearned, nbrPlace);
                 }
+
             }
+            
         }
         else if(mode == 0 || (mode == 2 && sub == 1)){ //mode autonomie
-            if(mode == 0){
-                nbrPlace = loadNbPlace();
+            
+            index = winner(placesLearned, place, NULL, nbrPlace);
+            turn(serialD, placesLearned[index].movementVectorAngle, buf);
+            driveMMS(serialD, 3000, buf);
+
+            loop++;
+        }
+        for(j = 0; j < place->landmarksNbr; j++){
+            if(place->landmarks[j].thumbnail != NULL) {
+                cvReleaseImage(&(place->landmarks[j].thumbnail));
             }
-            placesLearned = malloc(nbrPlace*sizeof(Place));
-
-            loadPlacesData(placesLearned, nbrPlace);
-            loadImages(placesLearned, nbrPlace);
-
-            while(loop < 10){
-                learnLocation(serialD, place, i);
-
-                index = winner(placesLearned, place, NULL, nbrPlace);
-                turn(serialD, placesLearned[index].movementVectorAngle, buf);
-                driveMMS(serialD, 3000, buf);
-
-                for(j = 0; j < place->landmarksNbr; j++){
-                    if(place->landmarks[j].thumbnail != NULL) {
-                        cvReleaseImage(&(place->landmarks[j].thumbnail));
-                    }
-                }
-                loop++;
-            }
-            loop = 0;
         }
     }
 
