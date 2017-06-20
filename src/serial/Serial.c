@@ -179,6 +179,12 @@ int turn(int fd, int angle, uint8_t *buffer){
 
 	int val = write_s(fd, buffer, 4);
 
+	uint8_t* ret = (uint8_t*)malloc(sizeof(uint8_t));
+
+	while(ret[0] != 116){
+		read_s(fd, ret, 1, 1000);
+	}
+
 	return val;
 }
 

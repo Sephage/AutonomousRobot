@@ -130,6 +130,7 @@ void turn(int angleWanted){
     }
   }while( (abs(diff)) > epsilon);//((abs(diff)) > epsilon) &&
   drive(0,0);
+  Serial.write(116);
 }
 
 //Do the action asked

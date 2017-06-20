@@ -22,12 +22,16 @@ int main(){
 	//int angle = askAngle(fd, buffer);
 	//printf("angle =  %d \n", angle);
 	turn(fd, 180, buffer);
-	sleep(6);
+	printf("turn \n");
+	//sleep(6);
 	turn(fd, 0, buffer);
-	sleep(6);
+	printf("turn \n");
+	//sleep(6);
 	turn(fd, 90, buffer);
-	sleep(6);
+	printf("turn \n");
+	//sleep(6);
 	turn(fd, 180, buffer);
+	printf("turn \n");
 	close_s(fd);
 
 	free(buffer);
