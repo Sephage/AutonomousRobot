@@ -89,6 +89,7 @@ void driveMMS(int value){
   drive(moveSpeed, moveSpeed);
   delay(value);
   drive(0,0);
+  Serial.write(100);
 }
 
 //Deprecated
