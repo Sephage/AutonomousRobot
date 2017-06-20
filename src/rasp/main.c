@@ -5,14 +5,17 @@
 #include "../../include/rasp/modes.h"
 #include "../../include/rasp/server/server.h"
 #include "../../include/rasp/recognition/recognition.h"
+
 #include <stdio.h>
 #include <stdio.h>
+#include <unistd.h>
+
 #include <cv.h>
 #include <highgui.h>
 
 #define __DEBUG 0
 
-int main(int* argv, char** argc) {
+int main(int argc, char** argv) {
     int serialD = open_s();
     char *msg = (char *)malloc(BUF_SIZE_RCV*sizeof(char));
     Place *place = (Place *)malloc(sizeof(Place));;
@@ -23,7 +26,29 @@ int main(int* argv, char** argc) {
     int c = 0;
     int nbrPlace = 0;
     int index;
+
+    int mode = 2, sub = 0;
+    extern char* optarg;
+    extern int optind, opterr;
+
     uint8_t* buf = malloc(sizeof(uint8_t));
+
+    while((c = getopt(argc, argv, "alt")) != -1){
+        switch(c){
+            case 'a':
+                mode = 0;
+                break;
+            case 'l' :
+                mode = 1;
+                break;
+            case 't':
+                mode = 2;
+                break;
+            default:
+                printf("Mode par défaut learning + autonome, -l: learning, -a: autonome");
+                break;
+        }
+    }
     //	initialiseServer(&server);
 
     /* Leaning mode */
@@ -37,50 +62,60 @@ int main(int* argv, char** argc) {
         sendEndMsgToClient(server, "End");
         i++;
         }*/
-
+    
     while(loop) {
+
         learnLocation(serialD, place, i);
-        savePlaceData(place, i);
-        saveImage(place, i);
-        i++;
-        nbrPlace++;
-        printf("Continue learning? (Y/n)\n");
-        while (c != '\n' && c != EOF)
-        {
+        if((mode == 2 && sub == 0) || mode == 1){ //learning
+            savePlaceData(place, i);
+            saveImage(place, i);
+            i++;
+            nbrPlace++;
+            printf("Continue learning? (Y/n)\n");
+            while (c != '\n' && c != EOF)
+            {
+                c = getchar();
+            }
             c = getchar();
+            if(c == 'n' || c == 'N'){
+                if(mode == 1){
+                    saveNbPlace(nbrPlace);
+                    loop = 0;
+                }
+                else
+                    sub = 1;
+            }
+            for(j = 0; j < place->landmarksNbr; j++){
+                if(place->landmarks[j].thumbnail != NULL) {
+                    cvReleaseImage(&(place->landmarks[j].thumbnail));
+                }
+            }
         }
-//        scanf("%c", cont);
-//        if(strcmp((const char *)cont, "n") == 0 || strcmp((const char *)cont, "N") == 0) {
-        c = getchar();
-        if(c == 'n' || c == 'N'){
+        else if(mode == 0 || (mode == 2 && sub == 1)){ //mode autonomie
+            if(mode == 0){
+                nbrPlace = loadNbPlace();
+            }
+            placesLearned = malloc(nbrPlace*sizeof(Place));
+
+            loadPlacesData(placesLearned, nbrPlace);
+            loadImages(placesLearned, nbrPlace);
+
+            while(loop < 10){
+                learnLocation(serialD, place, i);
+
+                index = winner(placesLearned, place, NULL, nbrPlace);
+                turn(serialD, placesLearned[index].movementVectorAngle, buf);
+                driveMMS(serialD, 3000, buf);
+
+                for(j = 0; j < place->landmarksNbr; j++){
+                    if(place->landmarks[j].thumbnail != NULL) {
+                        cvReleaseImage(&(place->landmarks[j].thumbnail));
+                    }
+                }
+                loop++;
+            }
             loop = 0;
         }
-        for(j = 0; j < place->landmarksNbr; j++){
-            if(place->landmarks[j].thumbnail != NULL) {
-                cvReleaseImage(&(place->landmarks[j].thumbnail));
-            }
-        }
-    }
-
-    loop = 0;
-
-    placesLearned = malloc(nbrPlace*sizeof(Place));
-    loadPlacesData(placesLearned, nbrPlace);
-    loadImages(placesLearned, nbrPlace);
-
-    while(loop < 10){
-        learnLocation(serialD, place, i);
-
-        index = winner(placesLearned, place, NULL, nbrPlace);
-        turn(serialD, placesLearned[index].movementVectorAngle, buf);
-        driveMMS(serialD, 3000, buf);
-
-        for(j = 0; j < place->landmarksNbr; j++){
-            if(place->landmarks[j].thumbnail != NULL) {
-                cvReleaseImage(&(place->landmarks[j].thumbnail));
-            }
-        }
-        loop++;
     }
 
 
