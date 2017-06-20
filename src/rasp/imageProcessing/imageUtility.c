@@ -396,7 +396,8 @@ float diffComparison(IplImage* current, IplImage* learned){
     return (1 - diff);
 }
 
-void learnLocation(int serialD, Place *place, int placeNbr) {
+void learnLocation(int serialD, Place *place, int placeNbr)
+{
     IplImage *thumbnail = 0;
     Interest *extremums;
     ImageToLearn images;
@@ -419,57 +420,58 @@ void learnLocation(int serialD, Place *place, int placeNbr) {
     derived = malloc(images.image[0]->width * sizeof(int64_t));
 
     mkdir("../saveImages/thumbnails", 0777);
-    for(l = 0; l < NB_CAPTURE; l++) {
+    for(l = 0; l < NB_CAPTURE; l++)
+	{
+		getSumColumnValues(images.image[l], sumColumn);
+		lowFiltering(sumColumn, smoothed, images.image[l]->width, SMOOTHNESS);
+		sobel(smoothed, derived, images.image[l]->width);
+		extremums = extremumExtract(sumColumn, derived, &nbrElt, images.image[l]->width, SLOPE);
+		qsort((void *) extremums, nbrElt, sizeof(Interest), compare);
 
-      getSumColumnValues(images.image[l], sumColumn);
-      lowFiltering(sumColumn, smoothed, images.image[l]->width, SMOOTHNESS);
-      sobel(smoothed, derived, images.image[l]->width);
-      extremums = extremumExtract(sumColumn, derived, &nbrElt, images.image[l]->width, SLOPE);
-      qsort((void *) extremums, nbrElt, sizeof(Interest), compare);
+		#ifdef __DEBUG
+		IplImage *graph = 0;
+		graph = cvCreateImage(cvSize(images.image[l]->width, images.image[l]->height), IPL_DEPTH_8U, 1);
+		printGraphOnImage(graph, smoothed);
+		sprintf(path, "../saveImages/smoothed%.3d_%.3d.jpg", placeNbr, l);
+		cvSaveImage(path, graph, 0);
+		cvReleaseImage(&graph);
+		#endif
 
-      #ifdef __DEBUG
-        IplImage *graph = 0;
-        graph = cvCreateImage(cvSize(images.image[l]->width, images.image[l]->height), IPL_DEPTH_8U, 1);
-        printGraphOnImage(graph, smoothed);
-        cvSaveImage("../saveImages/smoothed.jpg", graph, 0);
-        cvReleaseImage(&graph);
-    	#endif
+		for(i  = 0; i < NB_LANDMARKS_IND && i < nbrElt; i++)
+		{
+			thumbnail = compressedThumbnail(images.image[l], extremums[i].index, HEIGHTPOS);
+			fAngle = (((float)extremums[i].index / images.image[l]->width)*CAMERA_VISION_ANGLE) - (CAMERA_VISION_ANGLE/2);
+			place->landmarks[nbrLandmarks].index = extremums[i].index;
+			place->landmarks[nbrLandmarks].thumbnail = thumbnail;
+			angleI = rAngle + (CAMERA_ROTATION*l - 90) + fAngle;
+			if(angleI < 0 )
+			{
+				place->landmarks[nbrLandmarks].angle = angleI + 360;
+			}
+			else if(angleI >= 360 )
+			{
+				place->landmarks[nbrLandmarks].angle = angleI - 360;
+			}
+			else
+			{
+				place->landmarks[nbrLandmarks].angle = angleI;
+			}
+			place->landmarks[nbrLandmarks].angle = (place->landmarks[nbrLandmarks].angle*M_PI)/180;
+			/*printf("L'angle initial est de %f, l'angle en radian est de %f, angle bousosle est %d\n", angleI,
+			place->landmarks[nbrLandmarks].angle, rAngle);*/
 
-      for(i  = 0; i < NB_LANDMARKS_IND && i < nbrElt; i++) {
-          sprintf(path, "../saveImages/thumbnails/thumbnails%.3d.jpg", nbrLandmarks);
-
-          thumbnail = compressedThumbnail(images.image[l], extremums[i].index, HEIGHTPOS);
-          fAngle = (((float)extremums[i].index / images.image[l]->width)*CAMERA_VISION_ANGLE) - (CAMERA_VISION_ANGLE/2);
-  		    place->landmarks[nbrLandmarks].index = extremums[i].index;
-  		    place->landmarks[nbrLandmarks].thumbnail = thumbnail;
-          angleI = rAngle + (CAMERA_ROTATION*l - 90) + fAngle;
-          if(angleI < 0 ) {
-            place->landmarks[nbrLandmarks].angle = angleI + 360;
-          }
-          else if(angleI >= 360 ) {
-            place->landmarks[nbrLandmarks].angle = angleI - 360;
-          }
-          else {
-            place->landmarks[nbrLandmarks].angle = angleI;
-          }
-          place->landmarks[nbrLandmarks].angle = (place->landmarks[nbrLandmarks].angle*M_PI)/180;
-  //        printf("L'angle initial est de %f, l'angle en radian est de %f, angle bousosle est %d\n", angleI, place->landmarks[nbrLandmarks].angle, rAngle);
-  //        cvSaveImage(path, thumbnail, 0);
-  //        cvReleaseImage(&thumbnail);
-
-          nbrLandmarks++;
-      }
-
-    }
+			nbrLandmarks++;
+		}
+	}
     place->landmarksNbr = nbrLandmarks;
     place->movementVectorAngle = rAngle;
 
     #ifdef __DEBUG
-  	  IplImage *graphOnImage = 0;
-  	  graphOnImage = cvLoadImage("../saveImages/contour.jpg", CV_LOAD_IMAGE_COLOR);
-  	  printGraphOnImage(graphOnImage, smoothed);
-      cvSaveImage("../saveImages/graphOnImage.jpg", graphOnImage, 0);
-      cvReleaseImage(&graphOnImage);
+  	IplImage *graphOnImage = 0;
+  	graphOnImage = cvLoadImage("../saveImages/contour.jpg", CV_LOAD_IMAGE_COLOR);
+  	printGraphOnImage(graphOnImage, smoothed);
+    cvSaveImage("../saveImages/graphOnImage.jpg", graphOnImage, 0);
+    cvReleaseImage(&graphOnImage);
   	#endif
 
     free(bufferW);
@@ -478,7 +480,8 @@ void learnLocation(int serialD, Place *place, int placeNbr) {
     free(derived);
     free(extremums);
 
-		for(l = 0; l < NB_CAPTURE; l++) {
-			cvReleaseImage(&(images.image[l]));
-		}
+	for(l = 0; l < NB_CAPTURE; l++)
+	{
+		cvReleaseImage(&(images.image[l]));
+	}
 }
