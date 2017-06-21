@@ -4,3 +4,7 @@ expérience 2:
 	Ligne relevé au quart supérieur
 expérience 3:
 	Utilisation d'une gaussienne
+expérience 4:
+	Sans Gaussienne mais zone compressé plus grande
+expérience 5:
+	Avec Gaussienne et zone compressé plus grande

@@ -9,7 +9,7 @@
 
 #define THETA 0.174533
 
-#define __DEBUG
+//#define __DEBUG
 
 int* multiWinner(Place *places, Place *current, ImageToLearn *currentImages, int placesNbr, int nbWinner)
 {
@@ -119,11 +119,11 @@ float computeActivities(Place *place, Place *current, ImageToLearn *currentImage
 			diffAngle = (place->landmarks[j]).angle - (current->landmarks[i]).angle;
 			diffAngle = diffAngle < -M_PI ? diffAngle + (2 * M_PI) : diffAngle;
 			diffAngle = diffAngle > M_PI ? diffAngle - (2 * M_PI) : diffAngle;
-			diffAngle = fabs(diffAngle);
-			//diffAngle = 1/(THETA*2.51)*exp(-0.5*pow((diffAngle/THETA),2));
+			//diffAngle = fabs(diffAngle);
+			diffAngle = 1/(THETA*2.51)*exp(-0.5*pow((diffAngle/THETA),2));
 
-			evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (1 - (diffAngle/M_PI)); 
-			//evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (diffAngle*(THETA*2.51));
+			//evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (1 - (diffAngle/M_PI)); 
+			evaluation = diffComparison((current->landmarks[i]).thumbnail, (place->landmarks[j]).thumbnail) * (diffAngle*(THETA*2.51));
 			if(evaluation > maximum)
 			{
 				index = j;
