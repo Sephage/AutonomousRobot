@@ -7,7 +7,7 @@
 #define NB_LANDMARKS_MAX 20
 #define NB_LANDMARKS_IND 4
 #define SMOOTHNESS 7
-#define SLOPE 350
+#define SLOPE 0
 #define CAMERA_VISION_ANGLE 51.6
 #define CAMERA_ROTATION 45
 #define ANGLES_CAPTURE {175,130,85,45,0}
@@ -17,6 +17,7 @@
 #define LMSIZE 32
 #define SCALEX 2
 #define SCALEY 6
+#define ANGLE_REFERENCE 0
 
 typedef struct{
 	int r;

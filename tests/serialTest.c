@@ -23,14 +23,29 @@ int main(){
 	//printf("angle =  %d \n", angle);
 	turn(fd, 180, buffer);
 	printf("turn \n");
-	//sleep(6);
+
 	turn(fd, 0, buffer);
 	printf("turn \n");
-	//sleep(6);
+
 	turn(fd, 90, buffer);
 	printf("turn \n");
 	//sleep(6);
 	turn(fd, 180, buffer);
+	printf("turn \n");
+
+	turn(fd, 270, buffer);
+	printf("turn \n");
+	turn(fd, 360, buffer);
+	printf("turn \n");
+
+	turn(fd, 325, buffer);
+	printf("turn \n");
+
+	turn(fd, 45, buffer);
+	printf("turn \n");
+	turn(fd, 360, buffer);
+	printf("turn \n");
+	turn(fd, 90, buffer);
 	printf("turn \n");
 	close_s(fd);
 

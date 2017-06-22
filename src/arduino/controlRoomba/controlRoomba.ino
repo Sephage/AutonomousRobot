@@ -107,7 +107,7 @@ void turnOld(int angleWanted){
 }
 
 void turn(int angleWanted){
-  int dir = -1;
+  int dir = 1;
   int diff = 0;
   int diffOld = 0;
   int turning = 1;
@@ -117,11 +117,28 @@ void turn(int angleWanted){
   else if(angleWanted > 360){
     angleWanted = 360;
   }
-  diff = angle - angleWanted;
-  if(diff > 0){
-    dir = 1;
+  angle = 0;
+  while(angle == 0){
+    angle = readCompass();
   }
-  drive2(speedTurn, dir);
+  diff = angleWanted - angle;
+  
+  if(abs(diff) < 180){
+    if(diff < 0){
+      dir = -1;
+    }
+  }
+  else if(angle < 180){
+    dir = -1;
+  }
+  
+  if(dir == -1){
+    drive(speedTurn, -speedTurn);
+  }
+  else{
+    drive(-speedTurn, speedTurn);
+  }
+  
   do{
     diffOld = diff;
     angle = (int)readCompass();

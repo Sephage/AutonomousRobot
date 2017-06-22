@@ -412,7 +412,9 @@ void learnLocation(int serialD, Place *place, int placeNbr)
     int i, l;
 
     nbrLandmarks = 0;
-    rAngle = askAngle(serialD, bufferW);
+    //rAngle = askAngle(serialD, bufferW);
+		place->movementVectorAngle = askAngle(serialD, bufferW);;
+		turn(serialD, ANGLE_REFERENCE, bufferW);
     images = captureAll(serialD, placeNbr);
 
     sumColumn = malloc(images.image[0]->width * sizeof(int64_t));
@@ -443,7 +445,7 @@ void learnLocation(int serialD, Place *place, int placeNbr)
 			fAngle = (((float)extremums[i].index / images.image[l]->width)*CAMERA_VISION_ANGLE) - (CAMERA_VISION_ANGLE/2);
 			place->landmarks[nbrLandmarks].index = extremums[i].index;
 			place->landmarks[nbrLandmarks].thumbnail = thumbnail;
-			angleI = rAngle + (CAMERA_ROTATION*l - 90) + fAngle;
+			angleI = ANGLE_REFERENCE + (CAMERA_ROTATION*l - 90) + fAngle;
 			if(angleI < 0 )
 			{
 				place->landmarks[nbrLandmarks].angle = angleI + 360;
@@ -464,7 +466,7 @@ void learnLocation(int serialD, Place *place, int placeNbr)
 		}
 	}
     place->landmarksNbr = nbrLandmarks;
-    place->movementVectorAngle = rAngle;
+    //place->movementVectorAngle  = rAngle;
 
     #ifdef __DEBUG
   	IplImage *graphOnImage = 0;
