@@ -13,7 +13,7 @@
 #include <cv.h>
 #include <highgui.h>
 
-#define __DEBUG 0
+//#define __DEBUG 0
 
 int main(int argc, char** argv) {
     int serialD = open_s();
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
         loadPlacesData(placesLearned, nbrPlace);
         loadImages(placesLearned, nbrPlace);
     }
-    
+
     while(loop < nbTurn) {
 
         learnLocation(serialD, place, i);
@@ -102,10 +102,10 @@ int main(int argc, char** argv) {
                 }
 
             }
-            
+
         }
         else if(mode == 0 || (mode == 2 && sub == 1)){ //mode autonomie
-            
+
             index = winner(placesLearned, place, NULL, nbrPlace);
             turn(serialD, placesLearned[index].movementVectorAngle, buf);
             driveMMS(serialD, 3000, buf);
